@@ -1,0 +1,568 @@
+PROJECT: AIDebate.io - AI Debate Platform + AIRepID Foundation
+TYPE: Progressive Web App (Mobile-First)
+STACK: Next.js 14 App Router + Tailwind + shadcn/ui + Supabase + Framer Motion + Vercel
+DEADLINE: December 5, 2025 (soft launch) ⚡ 24-HOUR SPRINT
+
+CONNECTED SERVICES:
+- Supabase: https://qnnpjhlxljtqyigedwkb.supabase.co
+- Deploy: Vercel (auto from GitHub)
+- Repo: DealAppSeo/aidebate-io
+
+MISSION: "Help Keep AI Safe & Ethical Through Crowdsourced Accountability"
+
+BUILD FROM SCRATCH. NO EXISTING CODE. SPEED IS CRITICAL.
+
+===== CORE CONCEPT =====
+
+"Watch AI Debate AI" - Users watch Claude vs GPT vs Gemini debate controversial topics in real-time, vote on winners, earn RepID points, and help build the first crowdsourced AI trust index.
+
+SECRET SAUCE: Every vote secretly builds AIRepID.com - the "credit score for AI" that creates our data moat. Users don't know they're building infrastructure until the reveal.
+
+===== MVP SCOPE (December 5 - 24 HOURS) =====
+
+TODAY (Dec 4 afternoon): Landing + email capture + debate viewing
+TONIGHT (Dec 4 overnight): Voting + RepID + basic leaderboard
+TOMORROW AM (Dec 5): Share cards + mobile polish + deploy
+TOMORROW NOON (Dec 5): SOFT LAUNCH 🚀
+Dec 6-8: Question rating + iterate + 4 days of social content before birthday wave
+
+===== VIRAL FLYWHEEL =====
+
+ATTRACT: "Watch Claude vs GPT debate [hot topic]"
+ENGAGE: Vote on winner + honesty (+10 RepID - predictable, trustworthy)
+RETAIN: Leaderboard + streaks + tier progression
+REFER: Share to earn VARIABLE bonus (15-35 RepID per conversion - excitement!)
+REVEAL (Week 2): "Your votes built something bigger..."
+
+===== REPID REWARD SYSTEM =====
+
+VOTING (Predictable - builds trust):
+- Base vote: +10 RepID (always)
+- Streak bonus: +2 per day (up to +10 max)
+- Early accuracy: +3 if matches consensus
+
+SHARING (Variable - creates excitement):
+- Share click: +5 RepID (guaranteed)
+- Conversion (friend votes): +15 to +35 RepID (variable!)
+  - Base: +15
+  - Random bonus: +0 to +15 (weighted toward middle)
+  - Jackpot (5% chance): +35 total
+- Toast: "🎉 Your share just earned +[X] RepID!" (reveals amount)
+
+QUESTION RATING (Day 3+):
+- Rate question: +2 RepID
+- Your question rated highly: +5 to +15 (based on score)
+
+===== FILE STRUCTURE =====
+
+/app
+├── page.tsx                    # Landing page
+├── layout.tsx                  # Root layout + fonts
+├── globals.css                 # Design system
+├── debate/[id]/page.tsx        # Debate arena
+├── leaderboard/page.tsx        # Rankings
+├── profile/page.tsx            # User profile + RepID
+├── api/
+│   ├── debate/
+│   │   ├── generate/route.ts   # Generate debate from AIs
+│   │   └── [id]/route.ts       # Get debate details
+│   ├── vote/route.ts           # Cast vote
+│   ├── share/route.ts          # Generate share link
+│   ├── auth/route.ts           # Email capture
+│   └── ai-repid/route.ts       # Get AI scores
+├── components/
+│   ├── DebateArena.tsx         # Main debate view
+│   ├── DebatePanel.tsx         # Single AI response
+│   ├── VoteButton.tsx          # Vote with animation
+│   ├── RepIDDisplay.tsx        # User RepID + tier
+│   ├── AIScoreCard.tsx         # AI reputation display
+│   ├── ShareCard.tsx           # Social share generator
+│   ├── Leaderboard.tsx         # Rankings table
+│   ├── StreakCounter.tsx       # Gamification
+│   ├── EmailCapture.tsx        # Gate before voting
+│   ├── TopicCarousel.tsx       # Trending debates
+│   └── MissionBanner.tsx       # "Help keep AI safe"
+└── lib/
+    ├── supabase.ts             # Client + helpers
+    ├── ai-clients.ts           # OpenAI, Anthropic, Google
+    └── repid.ts                # RepID calculations
+
+===== DETAILED SPECS =====
+
+### FILE 1: /app/page.tsx (Landing Page)
+
+Initial Load Animation:
+- Pulsing heartbeat loader (3 concentric circles, cyan glow)
+- Pulse rhythm: 0.8s ease-in-out infinite
+- Fades to content after 1.5s or data loaded
+
+Hero section:
+- Headline: "Watch AI Debate AI" (Clash Display, 48px mobile, 72px desktop)
+- Subhead: "Your votes help keep AI honest" (Satoshi, 18px, gray-400)
+- Pulsing gradient animation on "Debate" word (cyan → pink → cyan)
+
+Today's Featured Debate:
+- Large card showing current active debate
+- Topic title + AI avatars (Claude vs GPT vs Gemini)
+- Live vote counter: "247 watching now" (Supabase realtime)
+- "Watch & Vote" CTA button (cyan, full width on mobile)
+
+Trending Debates (horizontal scroll):
+- 3-5 debate cards
+- Topic + vote split pie chart
+- Tap to enter
+
+AI Trust Scores (horizontal scroll):
+- Top 5 AIs by RepID
+- Avatar + name + score + trend arrow
+- "Powered by 12,847 community votes"
+
+Email Capture (sticky bottom on mobile):
+- "Enter email to vote and track your impact"
+- Email input + "Join" button
+- Privacy note: "We'll never spam. Your votes matter."
+
+Social Proof Footer:
+- "12,847 votes cast" | "847 AI behaviors flagged" | "94% find it valuable"
+
+### FILE 2: /app/debate/[id]/page.tsx (Debate Arena)
+
+Layout:
+- Mobile: Stacked panels, swipe between AIs
+- Desktop: Side-by-side (2 or 3 columns)
+
+Header:
+- Topic title
+- Timer/status: "Voting ends in 2h 34m" or "Voting closed"
+- Back arrow
+
+Debate Panels (per AI):
+- AI avatar + name + provider
+- RepID badge: "82.5 RepID" (color coded: green >70, yellow 50-70, red <50)
+- Response text (streaming if live, static if complete)
+- Typing indicator animation during stream
+- Vote button at bottom of panel
+
+Vote Buttons:
+- "Vote [AI Name]" with heart icon
+- Disabled if already voted
+- On vote: Heart burst animation + confetti
+- Toast: "Your vote updated Claude's Honesty Score!"
+
+Post-Vote Section (appears after voting):
+- "You voted for [AI]"
+- Share button: "Share this debate"
+- Current vote split (animated bar)
+- "+10 RepID earned" toast
+
+Question Rating (Day 3 addition):
+- Below debate: "Was this a good question?"
+- Thumbs up / Thumbs down
+- "+2 bonus RepID for rating"
+
+### FILE 3: /app/components/VoteButton.tsx
+
+States:
+- Default: Cyan outline, "Vote for [AI]"
+- Hover: Cyan fill, pulse animation
+- Disabled (already voted): Gray, "Voted ✓"
+- Loading: Spinner
+
+On Click:
+1. Check if user has email (if not, show EmailCapture modal)
+2. POST to /api/vote
+3. Play animations:
+   - Heart burst from button
+   - Confetti explosion (15 particles)
+   - Haptic feedback (mobile)
+4. Show toast with RepID earned
+5. Update vote counts in UI (optimistic)
+
+Animation specs:
+- Heart: Scale 1→1.5→1, duration 300ms
+- Confetti: 15 particles, spread 360°, fall 500ms
+- Toast: Slide up, stay 3s, slide down
+
+### FILE 4: /app/components/EmailCapture.tsx
+
+Modal (appears before first vote):
+- Headline: "One quick step to vote"
+- Subhead: "Your votes help keep AI honest and accountable"
+- Email input (large, mobile-friendly)
+- "Start Voting" button
+- "We'll never spam. Just important AI safety updates."
+- Skip option: "Just watching" (closes modal, can't vote)
+
+On submit:
+- Validate email format
+- POST to /api/auth
+- Store user in Supabase
+- Set cookie for session
+- Close modal, allow vote
+
+### FILE 5: /app/components/AIScoreCard.tsx
+
+Compact version (for carousels):
+- Avatar (40px circle)
+- Name + Provider
+- RepID score (large, color-coded)
+- Trend arrow (up/down/neutral)
+
+Expanded version (for profile/details):
+- Avatar (80px)
+- Name + Provider + Version
+- Overall RepID (prominent)
+- 6-dimension radar chart (Recharts)
+- Total votes
+- "Based on [X] community votes"
+
+### FILE 6: /app/components/ShareCard.tsx
+
+Generates shareable content:
+- Debate topic
+- Vote split visualization
+- "I voted for [AI]" badge
+- QR code to debate
+- AIDebate.io branding
+
+Share buttons:
+- LinkedIn (primary - 30K network!)
+- Twitter/X
+- Copy link
+- Email
+
+On share:
+1. Generate unique share_code
+2. Insert into shares table
+3. Copy link or open share dialog
+4. Track in analytics
+
+### FILE 7: /app/leaderboard/page.tsx
+
+Tabs:
+- "AI Rankings" (default)
+- "Top Voters"
+- "Your Impact" (logged in only)
+
+AI Rankings:
+- Table: Rank | Avatar | Name | RepID | Votes | Trend
+- Click row to expand dimensions
+- Filter by dimension dropdown
+- Time period: Today | Week | All-time
+
+Top Voters:
+- Table: Rank | Avatar | Name | RepID | Accuracy | Streak
+- Your position highlighted if logged in
+- "You're #47 (3 votes to #46)"
+
+Your Impact (personalized):
+- Total votes cast
+- Accuracy percentage
+- Debates influenced
+- "Your voice has shaped AI accountability"
+
+### FILE 8: /app/profile/page.tsx
+
+Header:
+- Avatar (or default)
+- Name/Email
+- RepID balance (large)
+- Tier badge (Observer → Validator)
+
+Progress Section:
+- Progress bar to next tier
+- "Vote 15 more times to unlock Voter tier"
+
+Alter Ego Section (IKEA Effect - simple MVP, architected for depth):
+- If RepID >= 100: "Name your AI Alter Ego"
+- Text input for name
+- Avatar picker (8 simple icons)
+- Bias Display (auto-calculated from vote patterns):
+  "Your voting style: Honesty 72% | Logic 58% | Empathy 64%"
+- "Your Alter Ego learns from every vote you cast"
+- Future hook: "Coming soon: EchoMe debates on your behalf"
+
+Stats:
+- Total votes
+- Accuracy
+- Current streak
+- Longest streak
+- Mission Heart meter (5 hearts visual)
+
+Recent Activity:
+- Last 10 votes with timestamps
+- Debates participated in
+
+### FILE 9: /app/api/vote/route.ts
+
+POST handler:
+```typescript
+export async function POST(req: Request) {
+  const { debate_id, voted_for, user_id } = await req.json();
+  
+  // Validate user exists
+  // Check not already voted
+  // Insert vote (trigger handles RepID)
+  // Update debate vote counts
+  // Get updated AI score
+  // Return { success, repid_earned, new_ai_score, bonuses }
+}
+```
+
+Response includes:
+- repid_earned (with breakdown)
+- new_vote_counts
+- ai_score_change
+- user_new_total
+- streak_count
+
+### FILE 10: /app/api/share/route.ts
+
+POST handler:
+- Generate unique share_code (nanoid)
+- Insert into shares table
+- Award +5 RepID for sharing (instant)
+- Return share URL + share card image URL
+
+GET handler (for tracking conversions):
+- Increment clicks on share_code
+- If click leads to vote, increment conversions
+- Calculate VARIABLE bonus:
+  ```typescript
+  function calculateShareBonus(): number {
+    const base = 15;
+    const random = Math.floor(Math.random() * 16); // 0-15
+    const isJackpot = Math.random() < 0.05; // 5% chance
+    return isJackpot ? 35 : base + random;
+  }
+  ```
+- Award bonus to original sharer
+- Send realtime notification: "🎉 Your share earned +[X] RepID!"
+
+### FILE 11: /lib/supabase.ts
+
+```typescript
+import { createClient } from '@supabase/supabase-js';
+
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+// Realtime subscription helper
+export function subscribeToDebate(debateId: string, callback: Function) {
+  return supabase
+    .channel(`debate:${debateId}`)
+    .on('postgres_changes', {
+      event: 'UPDATE',
+      schema: 'public',
+      table: 'debates',
+      filter: `id=eq.${debateId}`
+    }, callback)
+    .subscribe();
+}
+
+// Get AI leaderboard
+export async function getAILeaderboard() {
+  return supabase.from('ai_leaderboard').select('*').limit(10);
+}
+
+// Get user by email
+export async function getUserByEmail(email: string) {
+  return supabase.from('aidebate_users').select('*').eq('email', email).single();
+}
+```
+
+### FILE 12: /lib/ai-clients.ts
+
+```typescript
+// Unified AI client for debate generation
+export async function generateDebateResponse(
+  model: string,
+  topic: string,
+  position: string
+): Promise<string> {
+  const systemPrompt = `You are participating in a debate about: "${topic}"
+Your position: ${position}
+Argue your position thoughtfully in 200-300 words.
+Be persuasive but fair. Acknowledge complexity.`;
+
+  switch (getProvider(model)) {
+    case 'anthropic':
+      return callClaude(systemPrompt, topic);
+    case 'openai':
+      return callGPT(systemPrompt, topic);
+    case 'google':
+      return callGemini(systemPrompt, topic);
+    default:
+      throw new Error(`Unknown model: ${model}`);
+  }
+}
+```
+
+===== DESIGN SYSTEM =====
+
+AESTHETIC: "Neon Arena" - Dark, bold, trustworthy
+
+COLORS:
+```css
+:root {
+  --bg-primary: #0A0A0F;
+  --bg-card: #14141F;
+  --bg-elevated: #1A1A2E;
+  --cyan: #00D9FF;
+  --pink: #FF006E;
+  --gold: #FFD60A;
+  --green: #00FF88;
+  --red: #FF4444;
+  --text-primary: #FFFFFF;
+  --text-secondary: #8B8B9E;
+  --text-muted: #4A4A5A;
+}
+```
+
+FONTS (Google Fonts):
+```css
+/* Headers */
+font-family: 'Clash Display', 'Space Grotesk', sans-serif;
+/* Body */
+font-family: 'Satoshi', 'Inter', sans-serif;
+/* Stats/Numbers */
+font-family: 'Space Mono', monospace;
+```
+
+COMPONENTS:
+- Cards: bg-card, rounded-2xl, border border-white/5
+- Buttons: bg-cyan text-black font-bold, hover:bg-cyan/90
+- Inputs: bg-bg-elevated border-white/10, focus:border-cyan
+- Badges: Small pills with icon + text
+
+ANIMATIONS:
+- Page load: Stagger fade-in (0.05s delay per element)
+- Hover: Scale 1.02, transition 150ms
+- Click: Scale 0.98 then 1.0
+- Vote: Heart burst + confetti
+- Score change: Number count-up animation
+
+RESPONSIVE:
+- Mobile-first
+- Breakpoints: sm:640px, md:768px, lg:1024px
+- Touch targets: 48px minimum
+- Bottom nav on mobile
+
+===== ENVIRONMENT VARIABLES =====
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://qnnpjhlxljtqyigedwkb.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
+SUPABASE_SERVICE_ROLE_KEY=xxx
+OPENAI_API_KEY=xxx
+ANTHROPIC_API_KEY=xxx
+GOOGLE_AI_API_KEY=xxx
+NEXT_PUBLIC_APP_URL=https://aidebate.io
+```
+
+===== SUCCESS CHECKLIST =====
+
+Before marking complete:
+[ ] Landing page loads <2s on mobile
+[ ] Email capture modal works
+[ ] Email saves to Supabase aidebate_users
+[ ] Can view seeded debates
+[ ] Vote button works (with email gate)
+[ ] Vote saves to Supabase votes table
+[ ] RepID awarded (check repid_transactions)
+[ ] AI score updates (check ai_models)
+[ ] Toast shows RepID earned
+[ ] Leaderboard displays AI rankings
+[ ] Leaderboard displays user rankings
+[ ] Share generates unique link
+[ ] Mobile swipe between debate panels
+[ ] Dark mode is default
+[ ] No console errors
+[ ] PWA manifest configured
+
+===== SEEDED CONTENT =====
+
+The database already has:
+- 10 AI models with benchmark scores
+- 5 debate topics
+- 8 Trinity agents
+
+Generate 3 complete debates on first load if debates table empty:
+1. "Is AI More Creative Than Humans?"
+2. "Should AI Ever Lie to Protect Someone?"
+3. "Will AI Replace Programmers by 2030?"
+
+===== DAY 3 ADDITIONS (Question Rating + Reciprocity) =====
+
+After MVP stable, add:
+
+1. Below each debate, show:
+   "Was this a good question to debate?"
+   [👍] [👎]
+   
+2. On rate:
+   - Save to question_ratings table
+   - Award +2 RepID
+   - Update topic engagement_score
+
+3. Show question scores on topic cards:
+   "92% found this question valuable"
+
+4. RECIPROCAL QUESTION VOTING (Key engagement loop):
+   - Track user's question submissions (future) or debates viewed
+   - After viewing/voting on 3 debates:
+     - Show modal: "Help the community! Rate one question to continue"
+     - Display random unrated question from queue
+     - User rates [👍] [👎] or [Skip - costs 5 RepID]
+     - Awards +2 RepID for rating
+   - Creates virtuous cycle: Everyone's questions get rated
+   - Prevents freeloading (view without contributing)
+   - Soft gate (can skip, but costs RepID)
+
+5. Question Rating Queue:
+   - Pool of topics needing ratings
+   - Prioritize: New topics, close to threshold, user hasn't seen
+   - After 10 ratings, user unlocks "Curator" badge
+
+===== FUTURE HOOKS (Architect Now, Build Later) =====
+
+Leave these placeholders in code:
+
+1. Alter Ego (100+ RepID):
+   ```typescript
+   // TODO: Unlock alter ego naming
+   if (user.repid_balance >= 100 && !user.alter_ego_name) {
+     // Show naming modal
+   }
+   ```
+
+2. Dimension Voting (Week 2):
+   ```typescript
+   // TODO: Add dimension votes
+   // votes.honesty_vote, votes.helpfulness_vote, etc.
+   ```
+
+3. User Questions (Week 3):
+   ```typescript
+   // TODO: User question submission
+   // Requires 500+ RepID to unlock
+   ```
+
+4. Add Your Agent (Month 2):
+   ```typescript
+   // TODO: Agent registration
+   // Requires 2000+ RepID
+   ```
+
+===== DEPLOY =====
+
+1. Push to GitHub: DealAppSeo/aidebate-io
+2. Connect Vercel to repo
+3. Set environment variables in Vercel
+4. Verify auto-deploy works
+5. Test production build
+6. Configure domain: aidebate.io
+
+BUILD NOW. SHIP DECEMBER 5 NOON. CHANGE AI ACCOUNTABILITY FOREVER.
