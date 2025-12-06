@@ -17,14 +17,12 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
-      // Fetch debates
       const debatesRes = await fetch('/api/debates');
       const debatesData = await debatesRes.json();
       if (debatesData.debates) {
         setDebates(debatesData.debates);
       }
 
-      // Fetch leaderboard
       const leaderboardRes = await fetch('/api/leaderboard');
       const leaderboardData = await leaderboardRes.json();
       if (leaderboardData.leaderboard) {
@@ -37,7 +35,7 @@ export default function Home() {
     }
   };
 
-  const handleVote = async (debateId: number, votedFor: 'ai_a' | 'ai_b') => {
+  const handleVote = async (debateId: string, votedFor: 'ai_a' | 'ai_b') => {
     try {
       await fetch('/api/vote', {
         method: 'POST',
@@ -106,14 +104,13 @@ export default function Home() {
                   key={debate.id}
                   debate={debate}
                   onVote={(votedFor) => handleVote(debate.id, votedFor)}
-                  showVoteButtons={true}
                 />
               ))}
             </div>
           ) : (
             <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-12 text-center">
               <p className="text-gray-500 dark:text-gray-400">
-                No active debates right now. Check back soon!
+                No debates available
               </p>
             </div>
           )}
@@ -125,12 +122,11 @@ export default function Home() {
         <section className="px-6 pb-12">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-title-sm font-outfit font-bold mb-6 text-gray-800 dark:text-white/90">
-              Trending Debates
+              More Debates
             </h2>
             <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] divide-y divide-gray-200 dark:divide-gray-800">
-              {debates.slice(3, 8).map((debate) => {
+              {debates.slice(3, 10).map((debate) => {
                 const totalVotes = (debate.ai_a_votes || 0) + (debate.ai_b_votes || 0);
-
                 return (
                   <Link key={debate.id} href={`/debate/${debate.id}`}>
                     <div className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/[0.03] transition cursor-pointer">
@@ -139,7 +135,7 @@ export default function Home() {
                       </span>
                       <div className="flex items-center gap-3">
                         <span className="text-theme-sm text-gray-500 dark:text-gray-400">
-                          {totalVotes.toLocaleString()} votes
+                          {totalVotes} votes
                         </span>
                         <ArrowRight className="w-4 h-4 text-gray-400" />
                       </div>
@@ -152,14 +148,14 @@ export default function Home() {
         </section>
       )}
 
-      {/* AI Trust Scores Leaderboard */}
-      <section className="px-6 pb-12">
-        <div className="max-w-7xl mx-auto">
-          {leaderboard.length > 0 && (
-            <LeaderboardTable models={leaderboard} limit={10} />
-          )}
-        </div>
-      </section>
+      {/* Leaderboard */}
+      {leaderboard.length > 0 && (
+        <section className="px-6 pb-12">
+          <div className="max-w-7xl mx-auto">
+            <LeaderboardTable models={leaderboard} />
+          </div>
+        </section>
+      )}
     </main>
   );
 }

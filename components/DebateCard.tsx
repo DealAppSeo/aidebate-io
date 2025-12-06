@@ -1,16 +1,11 @@
 import React from 'react';
 
 interface DebateCardProps {
-    debate: any; // Simplified - debate object from API
+    debate: any;
     onVote?: (votedFor: 'ai_a' | 'ai_b') => void;
-    showVoteButtons?: boolean;
 }
 
-export default function DebateCard({
-    debate,
-    onVote,
-    showVoteButtons = true,
-}: DebateCardProps) {
+export default function DebateCard({ debate, onVote }: DebateCardProps) {
     const totalVotes = (debate.ai_a_votes || 0) + (debate.ai_b_votes || 0);
 
     const getVotePercentage = (votes: number) => {
@@ -20,7 +15,7 @@ export default function DebateCard({
 
     return (
         <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-            {/* Card Header */}
+            {/* Header */}
             <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800">
                 <h3 className="text-lg font-medium text-gray-800 dark:text-white/90">
                     {debate.topic}
@@ -30,17 +25,20 @@ export default function DebateCard({
                         {debate.description}
                     </p>
                 )}
+                {debate.category && (
+                    <span className="inline-flex items-center px-2 py-1 mt-2 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-white/5 dark:text-gray-400">
+                        {debate.category}
+                    </span>
+                )}
             </div>
 
-            {/* Card Body - Two Column Layout */}
+            {/* Two Column Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                {/* AI A Column */}
+                {/* AI A */}
                 <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <span className="inline-flex items-center px-2.5 py-0.5 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400">
-                            {debate.ai_a_name}
-                        </span>
-                    </div>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400">
+                        {debate.ai_a_name}
+                    </span>
 
                     {debate.ai_a_position && (
                         <div className="rounded-lg bg-gray-50 dark:bg-white/[0.03] p-4">
@@ -50,31 +48,27 @@ export default function DebateCard({
                         </div>
                     )}
 
-                    {/* Vote Count */}
                     <div className="flex items-center justify-between">
-                        <span className="text-theme-sm text-gray-500 dark:text-gray-400">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                             {debate.ai_a_votes || 0} votes ({getVotePercentage(debate.ai_a_votes || 0)}%)
                         </span>
                     </div>
 
-                    {/* Vote Button */}
-                    {showVoteButtons && onVote && (
+                    {onVote && (
                         <button
                             onClick={() => onVote('ai_a')}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg transition w-full px-5 py-3.5 text-sm bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600"
+                            className="w-full px-5 py-3.5 text-sm font-medium rounded-lg bg-brand-500 text-white hover:bg-brand-600 transition"
                         >
                             Vote for {debate.ai_a_name}
                         </button>
                     )}
                 </div>
 
-                {/* AI B Column */}
+                {/* AI B */}
                 <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <span className="inline-flex items-center px-2.5 py-0.5 justify-center gap-1 rounded-full font-medium text-sm bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500">
-                            {debate.ai_b_name}
-                        </span>
-                    </div>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium text-sm bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500">
+                        {debate.ai_b_name}
+                    </span>
 
                     {debate.ai_b_position && (
                         <div className="rounded-lg bg-gray-50 dark:bg-white/[0.03] p-4">
@@ -84,18 +78,16 @@ export default function DebateCard({
                         </div>
                     )}
 
-                    {/* Vote Count */}
                     <div className="flex items-center justify-between">
-                        <span className="text-theme-sm text-gray-500 dark:text-gray-400">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                             {debate.ai_b_votes || 0} votes ({getVotePercentage(debate.ai_b_votes || 0)}%)
                         </span>
                     </div>
 
-                    {/* Vote Button */}
-                    {showVoteButtons && onVote && (
+                    {onVote && (
                         <button
                             onClick={() => onVote('ai_b')}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg transition w-full px-5 py-3.5 text-sm bg-success-500 text-white shadow-theme-xs hover:bg-success-600"
+                            className="w-full px-5 py-3.5 text-sm font-medium rounded-lg bg-success-500 text-white hover:bg-success-600 transition"
                         >
                             Vote for {debate.ai_b_name}
                         </button>
