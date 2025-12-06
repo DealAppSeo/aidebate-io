@@ -1,34 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import DebateCard from "@/components/DebateCard";
-import { Database } from "@/lib/supabase";
-
-type AIModel = Database['public']['Tables']['ai_models']['Row'];
-type Debate = Database['public']['Tables']['debates']['Row'];
-type Topic = Database['public']['Tables']['aidebate_topics']['Row'];
-
-interface DebateWithTopic extends Debate {
-    aidebate_topics: Topic;
-}
 
 export default function DebatePage() {
     const params = useParams();
-    const router = useRouter();
     const debateId = params.id as string;
 
-    const [debate, setDebate] = useState<DebateWithTopic | null>(null);
-    const [models, setModels] = useState<Record<number, AIModel>>({});
+    const [debate, setDebate] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [voted, setVoted] = useState(false);
 
     useEffect(() => {
         if (debateId) {
             fetchDebate();
-            fetchModels();
         }
     }, [debateId]);
 
@@ -46,43 +34,22 @@ export default function DebatePage() {
         }
     };
 
-    const fetchModels = async () => {
-        try {
-            const res = await fetch('/api/models');
-            const data = await res.json();
-            if (data.models) {
-                const modelsMap: Record<number, AIModel> = {};
-                data.models.forEach((model: AIModel) => {
-                    modelsMap[model.id] = model;
-                });
-                setModels(modelsMap);
-            }
-        } catch (error) {
-            console.error("Error fetching models:", error);
-        }
-    };
-
-    const handleVote = async (votedFor: 'model_a' | 'model_b' | 'model_c') => {
+    const handleVote = async (votedFor: 'ai_a' | 'ai_b') => {
         try {
             await fetch('/api/vote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    debate_id: parseInt(debateId),
+                    debate_id: debateId,
                     voted_for: votedFor,
-                    user_email: 'guest@aidebate.io', // TODO: Replace with actual user email from auth
+                    user_email: 'guest@aidebate.io',
                 }),
             });
             setVoted(true);
-            // Refresh debate data
             fetchDebate();
         } catch (error) {
             console.error("Error voting:", error);
         }
-    };
-
-    const getModelById = (id: string): AIModel | undefined => {
-        return models[parseInt(id)];
     };
 
     if (loading) {
@@ -104,19 +71,6 @@ export default function DebatePage() {
                         </button>
                     </Link>
                 </div>
-            </main>
-        );
-    }
-
-    const topic = debate.aidebate_topics;
-    const modelA = getModelById(topic.model_a);
-    const modelB = getModelById(topic.model_b);
-    const modelC = topic.model_c ? getModelById(topic.model_c) : null;
-
-    if (!modelA || !modelB) {
-        return (
-            <main className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-                <p className="text-gray-500 dark:text-gray-400">Error loading AI models</p>
             </main>
         );
     }
@@ -152,12 +106,7 @@ export default function DebatePage() {
 
                     <DebateCard
                         debate={debate}
-                        topic={topic}
-                        modelA={modelA}
-                        modelB={modelB}
-                        modelC={modelC}
                         onVote={handleVote}
-                        showVoteButtons={!voted && debate.status === 'active'}
                     />
 
                     {/* Additional Info */}
@@ -165,25 +114,17 @@ export default function DebatePage() {
                         <h3 className="text-base font-medium text-gray-800 dark:text-white/90 mb-4">
                             Debate Statistics
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <p className="text-theme-xs text-gray-500 dark:text-gray-400 mb-1">
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
                                     Total Votes
                                 </p>
                                 <p className="text-lg font-medium text-gray-800 dark:text-white/90">
-                                    {(debate.model_a_votes + debate.model_b_votes + debate.model_c_votes).toLocaleString()}
+                                    {((debate.ai_a_votes || 0) + (debate.ai_b_votes || 0)).toLocaleString()}
                                 </p>
                             </div>
                             <div>
-                                <p className="text-theme-xs text-gray-500 dark:text-gray-400 mb-1">
-                                    Total Views
-                                </p>
-                                <p className="text-lg font-medium text-gray-800 dark:text-white/90">
-                                    {debate.total_views.toLocaleString()}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-theme-xs text-gray-500 dark:text-gray-400 mb-1">
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
                                     Status
                                 </p>
                                 <span className="inline-flex items-center px-2.5 py-0.5 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400">
