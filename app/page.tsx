@@ -5,20 +5,10 @@ import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import DebateCard from "@/components/DebateCard";
 import LeaderboardTable from "@/components/LeaderboardTable";
-import { Database } from "@/lib/supabase";
-
-type AIModel = Database['public']['Tables']['ai_models']['Row'];
-type Debate = Database['public']['Tables']['debates']['Row'];
-type Topic = Database['public']['Tables']['aidebate_topics']['Row'];
-
-interface DebateWithTopic extends Debate {
-  aidebate_topics: Topic;
-}
 
 export default function Home() {
-  const [activeDebates, setActiveDebates] = useState<DebateWithTopic[]>([]);
-  const [leaderboardModels, setLeaderboardModels] = useState<AIModel[]>([]);
-  const [models, setModels] = useState<Record<number, AIModel>>({});
+  const [debates, setDebates] = useState<any[]>([]);
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,29 +17,18 @@ export default function Home() {
 
   const fetchData = async () => {
     try {
-      // Fetch active debates
+      // Fetch debates
       const debatesRes = await fetch('/api/debates');
       const debatesData = await debatesRes.json();
       if (debatesData.debates) {
-        setActiveDebates(debatesData.debates);
+        setDebates(debatesData.debates);
       }
 
       // Fetch leaderboard
       const leaderboardRes = await fetch('/api/leaderboard');
       const leaderboardData = await leaderboardRes.json();
-      if (leaderboardData.ai) {
-        setLeaderboardModels(leaderboardData.ai);
-      }
-
-      // Fetch all AI models for lookup
-      const modelsRes = await fetch('/api/models');
-      const modelsData = await modelsRes.json();
-      if (modelsData.models) {
-        const modelsMap: Record<number, AIModel> = {};
-        modelsData.models.forEach((model: AIModel) => {
-          modelsMap[model.id] = model;
-        });
-        setModels(modelsMap);
+      if (leaderboardData.leaderboard) {
+        setLeaderboard(leaderboardData.leaderboard);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -58,7 +37,7 @@ export default function Home() {
     }
   };
 
-  const handleVote = async (debateId: number, votedFor: 'model_a' | 'model_b' | 'model_c') => {
+  const handleVote = async (debateId: number, votedFor: 'ai_a' | 'ai_b') => {
     try {
       await fetch('/api/vote', {
         method: 'POST',
@@ -66,18 +45,13 @@ export default function Home() {
         body: JSON.stringify({
           debate_id: debateId,
           voted_for: votedFor,
-          user_id: 1, // TODO: Replace with actual user ID from auth
+          user_email: 'guest@aidebate.io',
         }),
       });
-      // Refresh debates after voting
       fetchData();
     } catch (error) {
       console.error("Error voting:", error);
     }
-  };
-
-  const getModelById = (id: string): AIModel | undefined => {
-    return models[parseInt(id)];
   };
 
   return (
@@ -125,29 +99,16 @@ export default function Home() {
             <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-12 text-center">
               <p className="text-gray-500 dark:text-gray-400">Loading debates...</p>
             </div>
-          ) : activeDebates.length > 0 ? (
+          ) : debates.length > 0 ? (
             <div className="space-y-6">
-              {activeDebates.slice(0, 3).map((debate) => {
-                const topic = debate.aidebate_topics;
-                const modelA = getModelById(topic.model_a);
-                const modelB = getModelById(topic.model_b);
-                const modelC = topic.model_c ? getModelById(topic.model_c) : null;
-
-                if (!modelA || !modelB) return null;
-
-                return (
-                  <DebateCard
-                    key={debate.id}
-                    debate={debate}
-                    topic={topic}
-                    modelA={modelA}
-                    modelB={modelB}
-                    modelC={modelC}
-                    onVote={(votedFor) => handleVote(debate.id, votedFor)}
-                    showVoteButtons={true}
-                  />
-                );
-              })}
+              {debates.slice(0, 3).map((debate) => (
+                <DebateCard
+                  key={debate.id}
+                  debate={debate}
+                  onVote={(votedFor) => handleVote(debate.id, votedFor)}
+                  showVoteButtons={true}
+                />
+              ))}
             </div>
           ) : (
             <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-12 text-center">
@@ -160,22 +121,21 @@ export default function Home() {
       </section>
 
       {/* Trending Debates */}
-      {activeDebates.length > 3 && (
+      {debates.length > 3 && (
         <section className="px-6 pb-12">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-title-sm font-outfit font-bold mb-6 text-gray-800 dark:text-white/90">
               Trending Debates
             </h2>
             <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] divide-y divide-gray-200 dark:divide-gray-800">
-              {activeDebates.slice(3, 8).map((debate) => {
-                const topic = debate.aidebate_topics;
-                const totalVotes = debate.model_a_votes + debate.model_b_votes + debate.model_c_votes;
+              {debates.slice(3, 8).map((debate) => {
+                const totalVotes = (debate.ai_a_votes || 0) + (debate.ai_b_votes || 0);
 
                 return (
                   <Link key={debate.id} href={`/debate/${debate.id}`}>
                     <div className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-white/[0.03] transition cursor-pointer">
                       <span className="text-sm font-medium text-gray-800 dark:text-white/90">
-                        {topic.title}
+                        {debate.topic}
                       </span>
                       <div className="flex items-center gap-3">
                         <span className="text-theme-sm text-gray-500 dark:text-gray-400">
@@ -195,8 +155,8 @@ export default function Home() {
       {/* AI Trust Scores Leaderboard */}
       <section className="px-6 pb-12">
         <div className="max-w-7xl mx-auto">
-          {leaderboardModels.length > 0 && (
-            <LeaderboardTable models={leaderboardModels} limit={10} />
+          {leaderboard.length > 0 && (
+            <LeaderboardTable models={leaderboard} limit={10} />
           )}
         </div>
       </section>
