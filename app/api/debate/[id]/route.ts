@@ -2,9 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { Database } from '@/lib/supabase';
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const debateId = params.id;
+        const { id: debateId } = await params;
 
         const supabase = createClient<Database>(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -66,3 +66,5 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
+
+
