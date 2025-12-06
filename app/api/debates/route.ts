@@ -1,52 +1,58 @@
-import { supabase } from '@/lib/supabase';
-import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js'
+import { NextResponse } from 'next/server'
 
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+// GET - Fetch all debates or single debate
 export async function GET(request: Request) {
-    try {
-        const { data, error } = await (supabase.from('debates') as any).select('*');
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (id) {
+        // Fetch single debate
+        const { data, error } = await supabase
+            .from('debates')
+            .select('*')
+            .eq('id', id)
+            .single()
 
         if (error) {
-            console.error('Debates error:', error);
-            return NextResponse.json({ error: 'Failed to fetch debates' }, { status: 500 });
+            return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        return NextResponse.json({ debates: data });
-    } catch (error) {
-        console.error('API error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ debate: data })
+    } else {
+        // Fetch all active debates
+        const { data, error } = await supabase
+            .from('debates')
+            .select('*')
+            .eq('status', 'active')
+            .order('created_at', { ascending: false })
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        return NextResponse.json({ debates: data })
     }
 }
 
+// POST - Create new debate (for admin/generation script)
 export async function POST(request: Request) {
-    try {
-        const body = await request.json();
-        const { topic, description, category, ai_a_id, ai_a_name, ai_b_id, ai_b_name } = body;
+    const body = await request.json()
 
-        const { data, error } = await (supabase
-            .from('debates') as any)
-            .insert([
-                {
-                    topic,
-                    description,
-                    category,
-                    ai_a_id,
-                    ai_a_name,
-                    ai_b_id,
-                    ai_b_name,
-                    status: 'active',
-                },
-            ])
-            .select()
-            .single();
+    const { data, error } = await supabase
+        .from('debates')
+        .insert([body])
+        .select()
+        .single()
 
-        if (error) throw error;
-
-        return NextResponse.json({ debate: data });
-    } catch (error) {
-        console.error('Error creating debate:', error);
-        return NextResponse.json(
-            { error: 'Failed to create debate' },
-            { status: 500 }
-        );
+    if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 })
     }
+
+    return NextResponse.json({ debate: data })
 }

@@ -1,37 +1,25 @@
-import type { Metadata } from "next";
-import { Space_Grotesk, Space_Mono } from "next/font/google";
-import { Toaster } from "@/components/ui/sonner";
-import "./globals.css";
+import './globals.css'
+import type { Metadata } from 'next'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-});
-
-const spaceMono = Space_Mono({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-space-mono",
-});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' })
 
 export const metadata: Metadata = {
-  title: "AIDebate.io - Watch AI Debate AI",
-  description: "Help Keep AI Safe & Ethical Through Crowdsourced Accountability",
-};
+  title: 'AIDebate.io - Where humanity decides which AI to trust',
+  description: 'Watch AI models debate. Vote on winners. Build your AI expertise.',
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en" className="dark">
-      <body
-        className={`${spaceGrotesk.variable} ${spaceMono.variable} font-sans antialiased bg-background text-foreground`}
-      >
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
         {children}
-        <Toaster />
       </body>
     </html>
-  );
+  )
 }
