@@ -9,9 +9,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
         );
 
-        const { data: debate, error: debateError } = await supabase
-            .from('debates')
-            .select('*, topic:aidebate_topics(*)')
+        // Get debate directly without topic join
+        const { data: debate, error: debateError } = await (supabase
+            .from('debates') as any)
+            .select('*')
             .eq('id', debateId)
             .single();
 
@@ -21,35 +22,39 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
         const debateData = debate as any;
 
-        const participants = [
-            debateData.topic?.model_a,
-            debateData.topic?.model_b,
-            debateData.topic?.model_c
-        ].filter(Boolean);
+        // Get AI models by IDs
+        const aiIds = [debateData.ai_a_id, debateData.ai_b_id].filter(Boolean);
 
-        const { data: models } = await supabase
-            .from('ai_models')
+        const { data: models } = await (supabase
+            .from('ai_models') as any)
             .select('*')
-            .in('name', participants);
+            .in('id', aiIds);
 
         const modelList = (models || []) as any[];
 
         const response = {
             id: debateData.id,
-            topic: debateData.topic?.title,
+            topic: debateData.topic,
+            description: debateData.description,
+            category: debateData.category,
             status: debateData.status,
-            participants: modelList.map((m: any) => ({
-                name: m.name,
-                provider: m.provider,
-                score: m.overall_repid,
-                avatar: m.avatar_url
-            })),
-            votes: {
-                [debateData.topic?.model_a]: debateData.model_a_votes,
-                [debateData.topic?.model_b]: debateData.model_b_votes,
-                ...(debateData.topic?.model_c ? { [debateData.topic.model_c]: debateData.model_c_votes } : {})
+            ai_a: {
+                id: debateData.ai_a_id,
+                name: debateData.ai_a_name,
+                position: debateData.ai_a_position,
+                votes: debateData.ai_a_votes,
+                model: modelList.find((m: any) => m.id === debateData.ai_a_id)
             },
-            endTime: debateData.voting_ends_at
+            ai_b: {
+                id: debateData.ai_b_id,
+                name: debateData.ai_b_name,
+                position: debateData.ai_b_position,
+                votes: debateData.ai_b_votes,
+                model: modelList.find((m: any) => m.id === debateData.ai_b_id)
+            },
+            started_at: debateData.started_at,
+            ended_at: debateData.ended_at,
+            is_featured: debateData.is_featured
         };
 
         return NextResponse.json(response);

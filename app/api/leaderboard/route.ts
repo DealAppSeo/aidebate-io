@@ -9,10 +9,11 @@ export async function GET(req: Request) {
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
         );
 
-        // Fetch AI Leaderboard
+        // Fetch AI Models Leaderboard
         const { data: aiLeaderboard, error: aiError } = await (supabase
-            .from('ai_leaderboard') as any)
+            .from('ai_models') as any)
             .select('*')
+            .order('overall_score', { ascending: false })
             .limit(10);
 
         if (aiError) {
@@ -20,13 +21,12 @@ export async function GET(req: Request) {
         }
 
         // Fetch User Leaderboard (Top 10)
-        // Note: user_leaderboard view might not exist yet if not run in SQL
-        // Fallback to raw query if needed
         const { data: userLeaderboard, error: userError } = await (supabase
             .from('aidebate_users') as any)
             .select('id, display_name, repid_balance, tier, avatar_url, total_votes')
             .order('repid_balance', { ascending: false })
             .limit(10);
+
         if (userError) {
             throw userError;
         }

@@ -7,13 +7,10 @@ export async function GET(request: Request) {
 
     try {
         if (id) {
-            // Get single debate with topic and models
+            // Get single debate
             const { data: debate, error: debateError } = await (supabase
                 .from('debates') as any)
-                .select(`
-          *,
-          aidebate_topics (*)
-        `)
+                .select('*')
                 .eq('id', id)
                 .single();
 
@@ -21,15 +18,12 @@ export async function GET(request: Request) {
 
             return NextResponse.json({ debate });
         } else {
-            // Get all active debates with topics
+            // Get all active debates
             const { data: debates, error: debatesError } = await (supabase
                 .from('debates') as any)
-                .select(`
-          *,
-          aidebate_topics (*)
-        `)
+                .select('*')
                 .eq('status', 'active')
-                .order('created_at', { ascending: false });
+                .order('started_at', { ascending: false });
 
             if (debatesError) throw debatesError;
 
@@ -47,16 +41,19 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { topic_id, model_a_response, model_b_response, model_c_response } = body;
+        const { topic, description, category, ai_a_id, ai_a_name, ai_b_id, ai_b_name } = body;
 
         const { data, error } = await (supabase
             .from('debates') as any)
             .insert([
                 {
-                    topic_id,
-                    model_a_response,
-                    model_b_response,
-                    model_c_response,
+                    topic,
+                    description,
+                    category,
+                    ai_a_id,
+                    ai_a_name,
+                    ai_b_id,
+                    ai_b_name,
                     status: 'active',
                 },
             ])
