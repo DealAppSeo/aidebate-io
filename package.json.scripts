@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "generate-debates": "tsx scripts/generate-debates.ts",
+    "generate-audio": "tsx scripts/generate-audio.ts",
+    "seed-debates": "tsx scripts/seed-debates.ts",
+    "setup-content": "npm run generate-debates && npm run generate-audio && npm run seed-debates"
+  }
+}
