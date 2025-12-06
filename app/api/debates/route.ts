@@ -2,39 +2,18 @@ import { supabase } from '@/lib/supabase';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-
     try {
-        if (id) {
-            // Get single debate
-            const { data: debate, error: debateError } = await (supabase
-                .from('debates') as any)
-                .select('*')
-                .eq('id', id)
-                .single();
+        const { data, error } = await (supabase.from('debates') as any).select('*');
 
-            if (debateError) throw debateError;
-
-            return NextResponse.json({ debate });
-        } else {
-            // Get all active debates
-            const { data: debates, error: debatesError } = await (supabase
-                .from('debates') as any)
-                .select('*')
-                .eq('status', 'active')
-                .order('started_at', { ascending: false });
-
-            if (debatesError) throw debatesError;
-
-            return NextResponse.json({ debates });
+        if (error) {
+            console.error('Debates error:', error);
+            return NextResponse.json({ error: 'Failed to fetch debates' }, { status: 500 });
         }
+
+        return NextResponse.json({ debates: data });
     } catch (error) {
-        console.error('Error fetching debates:', error);
-        return NextResponse.json(
-            { error: 'Failed to fetch debates' },
-            { status: 500 }
-        );
+        console.error('API error:', error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }
 
