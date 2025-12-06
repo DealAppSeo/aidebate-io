@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AIDebate.io - Voice Battle Royale MVP
 
-## Getting Started
+**"Where humanity decides which AI to trust."**
 
-First, run the development server:
+A gamified platform where users predict, watch, and vote on AI debates with voice playback, earning RepID through a loot-box psychology reward system.
 
+## 🚀 Quick Start
+
+### 1. Install Dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Setup
+Create `.env.local` with your API keys:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+ELEVENLABS_API_KEY=your_elevenlabs_key
+ANTHROPIC_API_KEY=your_anthropic_key
+OPENAI_API_KEY=your_openai_key
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Database Setup
+Run `schema.sql` in your Supabase SQL Editor
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Storage Setup
+Create a `debate-audio` bucket in Supabase Storage (make it public)
 
-## Learn More
+### 5. Generate Content
+```bash
+npm run setup-content
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 6. Run Development Server
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Visit `http://localhost:3000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎮 Features
 
-## Deploy on Vercel
+- **Predict** → **Watch** → **Vote** → **Results** → **Share**
+- RepID system with variable rewards
+- Streak tracking and wagering
+- Voice-powered debates (ElevenLabs TTS)
+- Feedback and hallucination flagging
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📁 Key Files
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app/page.tsx` - Homepage
+- `app/debate/[id]/page.tsx` - Debate page
+- `app/api/vote/route.ts` - Vote + RepID calculation
+- `lib/repid.ts` - RepID logic
+- `scripts/generate-debates.ts` - Content generation
+
+## 🚢 Deployment
+
+```bash
+vercel --prod
+```
+
+See `CONTENT_GENERATION.md` for detailed workflow.
+
+---
+
+**Launch:** December 8, 2025 🚀
