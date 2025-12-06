@@ -17,8 +17,8 @@ export async function POST(req: Request) {
         );
 
         // 1. Get User ID from email
-        const { data: userData, error: userError } = await supabase
-            .from('aidebate_users')
+        const { data: userData, error: userError } = await (supabase
+            .from('aidebate_users') as any)
             .select('id')
             .eq('email', user_email)
             .single();
@@ -30,8 +30,8 @@ export async function POST(req: Request) {
         const user_id = userData.id;
 
         // 2. Check if already voted
-        const { data: existingVote } = await supabase
-            .from('votes')
+        const { data: existingVote } = await (supabase
+            .from('votes') as any)
             .select('id')
             .eq('user_id', user_id)
             .eq('debate_id', debate_id)
@@ -42,8 +42,8 @@ export async function POST(req: Request) {
         }
 
         // 3. Insert Vote (Trigger will handle RepID and AI score updates)
-        const { data: voteData, error: voteError } = await supabase
-            .from('votes')
+        const { data: voteData, error: voteError } = await (supabase
+            .from('votes') as any)
             .insert({
                 user_id,
                 debate_id: parseInt(debate_id),

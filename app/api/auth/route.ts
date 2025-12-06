@@ -16,8 +16,8 @@ export async function POST(req: Request) {
         );
 
         // Check if user exists
-        const { data: existingUser } = await supabase
-            .from('aidebate_users')
+        const { data: existingUser } = await (supabase
+            .from('aidebate_users') as any)
             .select('id, repid_balance, tier')
             .eq('email', email)
             .single();
@@ -31,8 +31,8 @@ export async function POST(req: Request) {
         }
 
         // Create new user
-        const { data: newUser, error: createError } = await supabase
-            .from('aidebate_users')
+        const { data: newUser, error: createError } = await (supabase
+            .from('aidebate_users') as any)
             .insert({
                 email,
                 display_name: email.split('@')[0], // Default display name

@@ -8,8 +8,8 @@ export async function GET(request: Request) {
     try {
         if (id) {
             // Get single debate with topic and models
-            const { data: debate, error: debateError } = await supabase
-                .from('debates')
+            const { data: debate, error: debateError } = await (supabase
+                .from('debates') as any)
                 .select(`
           *,
           aidebate_topics (*)
@@ -22,8 +22,8 @@ export async function GET(request: Request) {
             return NextResponse.json({ debate });
         } else {
             // Get all active debates with topics
-            const { data: debates, error: debatesError } = await supabase
-                .from('debates')
+            const { data: debates, error: debatesError } = await (supabase
+                .from('debates') as any)
                 .select(`
           *,
           aidebate_topics (*)
@@ -49,8 +49,8 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { topic_id, model_a_response, model_b_response, model_c_response } = body;
 
-        const { data, error } = await supabase
-            .from('debates')
+        const { data, error } = await (supabase
+            .from('debates') as any)
             .insert([
                 {
                     topic_id,

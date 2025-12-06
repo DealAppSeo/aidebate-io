@@ -10,8 +10,8 @@ export async function GET(req: Request) {
         );
 
         // Fetch AI Leaderboard
-        const { data: aiLeaderboard, error: aiError } = await supabase
-            .from('ai_leaderboard')
+        const { data: aiLeaderboard, error: aiError } = await (supabase
+            .from('ai_leaderboard') as any)
             .select('*')
             .limit(10);
 
@@ -22,8 +22,8 @@ export async function GET(req: Request) {
         // Fetch User Leaderboard (Top 10)
         // Note: user_leaderboard view might not exist yet if not run in SQL
         // Fallback to raw query if needed
-        const { data: userLeaderboard, error: userError } = await supabase
-            .from('aidebate_users')
+        const { data: userLeaderboard, error: userError } = await (supabase
+            .from('aidebate_users') as any)
             .select('id, display_name, repid_balance, tier, avatar_url, total_votes')
             .order('repid_balance', { ascending: false })
             .limit(10);

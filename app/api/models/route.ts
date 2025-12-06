@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
     try {
-        const { data: models, error } = await supabase
-            .from('ai_models')
+        const { data: models, error } = await (supabase
+            .from('ai_models') as any)
             .select('*')
             .order('name', { ascending: true });
 
