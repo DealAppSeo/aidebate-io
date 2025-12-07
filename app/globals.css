@@ -1,83 +1,78 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: 10 10 10;
-    /* #0a0a0a */
-    --surface: 23 23 23;
-    /* #171717 */
-    --surface-hover: 38 38 38;
-    /* #262626 */
+:root {
+  --background: #0a0a0a;
+  --surface: #171717;
+  --surface-hover: #262626;
+  --claude: #8b5cf6;
+  --gpt: #f59e0b;
+  --grok: #ef4444;
+  --gemini: #22c55e;
+  --llama: #3b82f6;
+  --deepseek: #06b6d4;
+  --repid: #fbbf24;
+  --streak: #f97316;
+  --bonus: #a855f7;
+  --primary: #3b82f6;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --muted: #71717a;
+  --border: #27272a;
+}
 
-    --claude: 139 92 246;
-    /* #8b5cf6 purple */
-    --gpt: 245 158 11;
-    /* #f59e0b amber */
-    --grok: 239 68 68;
-    /* #ef4444 red */
-    --gemini: 34 197 94;
-    /* #22c55e green */
-    --llama: 59 130 246;
-    /* #3b82f6 blue */
-    --deepseek: 6 182 212;
-    /* #06b6d4 cyan */
+* {
+  border-color: rgb(39 39 42);
+}
 
-    --repid: 251 191 36;
-    /* #fbbf24 gold */
-    --streak: 249 115 22;
-    /* #f97316 orange */
-    --bonus: 168 85 247;
-    /* #a855f7 purple */
+body {
+  background-color: var(--background);
+  color: white;
+  font-family: system-ui, -apple-system, sans-serif;
+}
 
-    --primary: 59 130 246;
-    /* #3b82f6 blue */
-    --success: 34 197 94;
-    /* #22c55e green */
-    --warning: 245 158 11;
-    /* #f59e0b amber */
-    --error: 239 68 68;
-    /* #ef4444 red */
-    --muted: 113 113 122;
-    /* #71717a gray */
-    --border: 39 39 42;
-    /* #27272a */
+.ai-claude {
+  background-color: var(--claude);
+  color: white;
+}
+
+.ai-gpt {
+  background-color: var(--gpt);
+  color: white;
+}
+
+.ai-grok {
+  background-color: var(--grok);
+  color: white;
+}
+
+.ai-gemini {
+  background-color: var(--gemini);
+  color: white;
+}
+
+.ai-llama {
+  background-color: var(--llama);
+  color: white;
+}
+
+.ai-deepseek {
+  background-color: var(--deepseek);
+  color: white;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-[#0a0a0a] text-white font-sans;
-  }
-}
-
-@layer utilities {
-  .ai-claude {
-    @apply bg-purple-600 text-white;
-  }
-
-  .ai-gpt {
-    @apply bg-amber-500 text-white;
-  }
-
-  .ai-grok {
-    @apply bg-red-500 text-white;
-  }
-
-  .ai-gemini {
-    @apply bg-green-500 text-white;
-  }
-
-  .ai-llama {
-    @apply bg-blue-500 text-white;
-  }
-
-  .ai-deepseek {
-    @apply bg-cyan-500 text-white;
-  }
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
 }

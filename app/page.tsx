@@ -3,14 +3,26 @@
 import { useEffect, useState } from 'react'
 import Header from '@/components/layout/Header'
 import DebateList from '@/components/debates/DebateList'
+import IntroExperience from '@/components/intro/IntroExperience'
 
 export default function HomePage() {
   const [debates, setDebates] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showIntro, setShowIntro] = useState(false)
 
   useEffect(() => {
+    // Check if intro has been seen
+    const hasSeenIntro = localStorage.getItem('aidebate_intro_seen')
+    if (!hasSeenIntro) {
+      setShowIntro(true)
+    }
     fetchDebates()
   }, [])
+
+  function handleIntroComplete() {
+    setShowIntro(false)
+    localStorage.setItem('aidebate_intro_seen', 'true')
+  }
 
   async function fetchDebates() {
     try {
@@ -26,6 +38,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
+      {showIntro && <IntroExperience onComplete={handleIntroComplete} />}
       <Header />
 
       <main className="container mx-auto px-4 py-12">

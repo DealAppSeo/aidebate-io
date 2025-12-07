@@ -7,7 +7,7 @@ import { X } from 'lucide-react'
 interface PredictionModalProps {
     isOpen: boolean
     onClose: () => void
-    onPredict: (prediction: 'ai1' | 'ai2' | null, wagered: boolean) => void
+    onPredict: (prediction: 'ai_a' | 'ai_b' | null, wagered: boolean) => void
     ai1Name: string
     ai2Name: string
     canWager: boolean
@@ -23,7 +23,7 @@ export default function PredictionModal({
     canWager,
     currentStreak
 }: PredictionModalProps) {
-    const [prediction, setPrediction] = useState<'ai1' | 'ai2' | null>(null)
+    const [prediction, setPrediction] = useState<'ai_a' | 'ai_b' | null>(null)
     const [wagered, setWagered] = useState(false)
 
     const handleSubmit = () => {
@@ -71,20 +71,20 @@ export default function PredictionModal({
                             {/* Prediction Buttons */}
                             <div className="space-y-3 mb-6">
                                 <button
-                                    onClick={() => setPrediction('ai1')}
-                                    className={`w-full p-4 rounded-lg border-2 transition-all ${prediction === 'ai1'
-                                            ? 'border-blue-500 bg-blue-500/10'
-                                            : 'border-[#27272a] hover:border-blue-500/50'
+                                    onClick={() => setPrediction('ai_a')}
+                                    className={`w-full p-4 rounded-lg border-2 transition-all ${prediction === 'ai_a'
+                                        ? 'border-blue-500 bg-blue-500/10'
+                                        : 'border-[#27272a] hover:border-blue-500/50'
                                         }`}
                                 >
                                     <div className="font-bold">{ai1Name} wins</div>
                                 </button>
 
                                 <button
-                                    onClick={() => setPrediction('ai2')}
-                                    className={`w-full p-4 rounded-lg border-2 transition-all ${prediction === 'ai2'
-                                            ? 'border-blue-500 bg-blue-500/10'
-                                            : 'border-[#27272a] hover:border-blue-500/50'
+                                    onClick={() => setPrediction('ai_b')}
+                                    className={`w-full p-4 rounded-lg border-2 transition-all ${prediction === 'ai_b'
+                                        ? 'border-blue-500 bg-blue-500/10'
+                                        : 'border-[#27272a] hover:border-blue-500/50'
                                         }`}
                                 >
                                     <div className="font-bold">{ai2Name} wins</div>
@@ -93,8 +93,8 @@ export default function PredictionModal({
                                 <button
                                     onClick={() => setPrediction(null)}
                                     className={`w-full p-4 rounded-lg border-2 transition-all ${prediction === null
-                                            ? 'border-gray-500 bg-gray-500/10'
-                                            : 'border-[#27272a] hover:border-gray-500/50'
+                                        ? 'border-gray-500 bg-gray-500/10'
+                                        : 'border-[#27272a] hover:border-gray-500/50'
                                         }`}
                                 >
                                     <div className="text-gray-400">Skip prediction</div>

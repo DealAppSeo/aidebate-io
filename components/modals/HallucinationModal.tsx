@@ -4,11 +4,19 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Flag } from 'lucide-react'
 import { useState } from 'react'
 
+// ACTUAL DATABASE FORMAT
+interface DatabaseRound {
+    round: number
+    type: string
+    ai_a_text: string
+    ai_b_text: string
+}
+
 interface HallucinationModalProps {
     isOpen: boolean
     onClose: () => void
     onSubmit: (roundNumber: number, aiName: string, claim: string, report: string) => void
-    rounds: Array<{ round_number: number; speaker: string; content: string }>
+    rounds: DatabaseRound[]
     ai1Name: string
     ai2Name: string
 }
@@ -75,19 +83,19 @@ export default function HallucinationModal({
                                 <label className="block text-sm text-gray-400 mb-2">Which AI?</label>
                                 <div className="flex gap-3">
                                     <button
-                                        onClick={() => setSelectedAI('ai1')}
-                                        className={`flex-1 p-3 rounded-lg border-2 transition-all ${selectedAI === 'ai1'
-                                                ? 'border-blue-500 bg-blue-500/10'
-                                                : 'border-[#27272a] hover:border-blue-500/50'
+                                        onClick={() => setSelectedAI('ai_a')}
+                                        className={`flex-1 p-3 rounded-lg border-2 transition-all ${selectedAI === 'ai_a'
+                                            ? 'border-blue-500 bg-blue-500/10'
+                                            : 'border-[#27272a] hover:border-blue-500/50'
                                             }`}
                                     >
                                         {ai1Name}
                                     </button>
                                     <button
-                                        onClick={() => setSelectedAI('ai2')}
-                                        className={`flex-1 p-3 rounded-lg border-2 transition-all ${selectedAI === 'ai2'
-                                                ? 'border-blue-500 bg-blue-500/10'
-                                                : 'border-[#27272a] hover:border-blue-500/50'
+                                        onClick={() => setSelectedAI('ai_b')}
+                                        className={`flex-1 p-3 rounded-lg border-2 transition-all ${selectedAI === 'ai_b'
+                                            ? 'border-blue-500 bg-blue-500/10'
+                                            : 'border-[#27272a] hover:border-blue-500/50'
                                             }`}
                                     >
                                         {ai2Name}
@@ -104,9 +112,9 @@ export default function HallucinationModal({
                                     className="w-full bg-[#0a0a0a] border border-[#27272a] rounded-lg p-3"
                                 >
                                     <option value="">Select round...</option>
-                                    {rounds.map((round, i) => (
-                                        <option key={i} value={round.round_number}>
-                                            Round {round.round_number}
+                                    {rounds.map((round) => (
+                                        <option key={round.round} value={round.round}>
+                                            Round {round.round} - {round.type}
                                         </option>
                                     ))}
                                 </select>

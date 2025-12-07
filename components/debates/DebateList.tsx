@@ -4,18 +4,15 @@ import DebateCard from './DebateCard'
 
 interface Debate {
     id: string
-    title: string
     topic: string
     category: string
-    ai1_name: string
-    ai1_model: string
-    ai2_name: string
-    ai2_model: string
-    vote_count_ai1: number
-    vote_count_ai2: number
-    vote_count_tie: number
-    total_duration_seconds: number
-    featured: boolean
+    ai_a_name: string
+    ai_a_id: string
+    ai_b_name: string
+    ai_b_id: string
+    ai_a_votes: number
+    ai_b_votes: number
+    is_featured: boolean
 }
 
 interface DebateListProps {

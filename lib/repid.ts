@@ -11,9 +11,9 @@ export interface RepIDBreakdown {
 }
 
 export function calculateRepID(
-    vote: 'ai1' | 'ai2' | 'tie',
-    prediction: 'ai1' | 'ai2' | null,
-    communityResult: { winner: 'ai1' | 'ai2' | 'tie', winnerPercent: number },
+    vote: 'ai_a' | 'ai_b' | 'tie',
+    prediction: 'ai_a' | 'ai_b' | 'tie' | null,
+    communityResult: { winner: 'ai_a' | 'ai_b' | 'tie', winnerPercent: number },
     userStreak: number,
     wagered: boolean
 ): RepIDBreakdown {

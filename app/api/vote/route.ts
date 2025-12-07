@@ -1,6 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { calculateRepID } from '@/lib/repid'
+import { rateLimit } from '@/lib/rate-limit'
+
+// 10 votes per minute per IP
+const limiter = rateLimit({
+    interval: 60 * 1000,
+    uniqueTokenPerInterval: 500,
+})
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,6 +15,13 @@ const supabase = createClient(
 )
 
 export async function POST(request: Request) {
+    const ip = request.headers.get('x-forwarded-for') || 'anonymous'
+    try {
+        await limiter.check(10, ip)
+    } catch {
+        return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
+    }
+
     try {
         const body = await request.json()
         const { session_id, debate_id, vote, prediction, wagered } = body
@@ -24,19 +38,23 @@ export async function POST(request: Request) {
         }
 
         // Calculate community winner
-        const totalVotes = debate.vote_count_ai1 + debate.vote_count_ai2 + debate.vote_count_tie
-        let communityWinner: 'ai1' | 'ai2' | 'tie' = 'ai1'
+        // Calculate community winner
+        const voteCountA = debate.ai_a_votes || 0
+        const voteCountB = debate.ai_b_votes || 0
+        const totalVotes = voteCountA + voteCountB
+
+        let communityWinner: 'ai_a' | 'ai_b' | 'tie' = 'ai_a'
         let winnerPercent = 0
 
-        if (debate.vote_count_ai1 > debate.vote_count_ai2 && debate.vote_count_ai1 > debate.vote_count_tie) {
-            communityWinner = 'ai1'
-            winnerPercent = totalVotes > 0 ? (debate.vote_count_ai1 / totalVotes) * 100 : 0
-        } else if (debate.vote_count_ai2 > debate.vote_count_ai1 && debate.vote_count_ai2 > debate.vote_count_tie) {
-            communityWinner = 'ai2'
-            winnerPercent = totalVotes > 0 ? (debate.vote_count_ai2 / totalVotes) * 100 : 0
+        if (voteCountA > voteCountB) {
+            communityWinner = 'ai_a'
+            winnerPercent = totalVotes > 0 ? (voteCountA / totalVotes) * 100 : 0
+        } else if (voteCountB > voteCountA) {
+            communityWinner = 'ai_b'
+            winnerPercent = totalVotes > 0 ? (voteCountB / totalVotes) * 100 : 0
         } else {
             communityWinner = 'tie'
-            winnerPercent = totalVotes > 0 ? (debate.vote_count_tie / totalVotes) * 100 : 0
+            winnerPercent = 0 // Tie has 0% winner dominance technically, or split
         }
 
         // Get user session for streak
@@ -58,11 +76,14 @@ export async function POST(request: Request) {
         )
 
         // Update debate vote counts
-        const voteField = vote === 'ai1' ? 'vote_count_ai1' : vote === 'ai2' ? 'vote_count_ai2' : 'vote_count_tie'
-        await supabase
-            .from('debates')
-            .update({ [voteField]: debate[voteField] + 1 })
-            .eq('id', debate_id)
+        // Note: vote_count_tie was removed from schema, so we only update ai_a/ai_b counts
+        if (vote === 'ai_a' || vote === 'ai_b') {
+            const voteField = vote === 'ai_a' ? 'ai_a_votes' : 'ai_b_votes'
+            await supabase
+                .from('debates')
+                .update({ [voteField]: debate[voteField] + 1 })
+                .eq('id', debate_id)
+        }
 
         // Record vote
         const predictionCorrect = prediction ? prediction === vote : null
@@ -99,6 +120,50 @@ export async function POST(request: Request) {
                 })
                 .eq('session_id', session_id)
         }
+
+        // --- REFERRAL LOGIC START ---
+        try {
+            if (session?.referred_by) {
+                // Check if this is their first vote (or if referral event exists and not completed)
+                const { data: referralEvent } = await supabase
+                    .from('referral_events')
+                    .select('*')
+                    .eq('referred_session', session_id)
+                    .eq('referred_voted', false)
+                    .single()
+
+                if (referralEvent) {
+                    const REFERRAL_BONUS = 25
+
+                    // Award bonus to referrer
+                    const { data: refUser } = await supabase
+                        .from('user_sessions')
+                        .select('repid_score, referral_count, referral_repid_earned')
+                        .eq('session_id', session.referred_by)
+                        .single()
+
+                    if (refUser) {
+                        await supabase
+                            .from('user_sessions')
+                            .update({
+                                repid_score: (refUser.repid_score || 0) + REFERRAL_BONUS,
+                                referral_count: (refUser.referral_count || 0) + 1,
+                                referral_repid_earned: (refUser.referral_repid_earned || 0) + REFERRAL_BONUS
+                            })
+                            .eq('session_id', session.referred_by)
+                    }
+
+                    // Mark referral as converted
+                    await supabase
+                        .from('referral_events')
+                        .update({ referred_voted: true, repid_awarded: REFERRAL_BONUS })
+                        .eq('id', referralEvent.id)
+                }
+            }
+        } catch (e) {
+            console.error("Referral Error:", e)
+        }
+        // --- REFERRAL LOGIC END ---
 
         return NextResponse.json({
             success: true,

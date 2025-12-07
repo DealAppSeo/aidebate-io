@@ -7,7 +7,7 @@ import { X } from 'lucide-react'
 interface VoteModalProps {
     isOpen: boolean
     onClose: () => void
-    onVote: (vote: 'ai1' | 'ai2' | 'tie') => void
+    onVote: (vote: 'ai_a' | 'ai_b' | 'tie') => void
     ai1Name: string
     ai2Name: string
 }
@@ -19,7 +19,7 @@ export default function VoteModal({
     ai1Name,
     ai2Name
 }: VoteModalProps) {
-    const [selectedVote, setSelectedVote] = useState<'ai1' | 'ai2' | 'tie' | null>(null)
+    const [selectedVote, setSelectedVote] = useState<'ai_a' | 'ai_b' | 'tie' | null>(null)
 
     const handleSubmit = () => {
         if (selectedVote) {
@@ -64,20 +64,20 @@ export default function VoteModal({
                             {/* Vote Buttons */}
                             <div className="space-y-3 mb-6">
                                 <button
-                                    onClick={() => setSelectedVote('ai1')}
-                                    className={`w-full p-4 rounded-lg border-2 transition-all ${selectedVote === 'ai1'
-                                            ? 'border-blue-500 bg-blue-500/10'
-                                            : 'border-[#27272a] hover:border-blue-500/50'
+                                    onClick={() => setSelectedVote('ai_a')}
+                                    className={`w-full p-4 rounded-lg border-2 transition-all ${selectedVote === 'ai_a'
+                                        ? 'border-blue-500 bg-blue-500/10'
+                                        : 'border-[#27272a] hover:border-blue-500/50'
                                         }`}
                                 >
                                     <div className="font-bold text-lg">{ai1Name}</div>
                                 </button>
 
                                 <button
-                                    onClick={() => setSelectedVote('ai2')}
-                                    className={`w-full p-4 rounded-lg border-2 transition-all ${selectedVote === 'ai2'
-                                            ? 'border-blue-500 bg-blue-500/10'
-                                            : 'border-[#27272a] hover:border-blue-500/50'
+                                    onClick={() => setSelectedVote('ai_b')}
+                                    className={`w-full p-4 rounded-lg border-2 transition-all ${selectedVote === 'ai_b'
+                                        ? 'border-blue-500 bg-blue-500/10'
+                                        : 'border-[#27272a] hover:border-blue-500/50'
                                         }`}
                                 >
                                     <div className="font-bold text-lg">{ai2Name}</div>
@@ -86,8 +86,8 @@ export default function VoteModal({
                                 <button
                                     onClick={() => setSelectedVote('tie')}
                                     className={`w-full p-4 rounded-lg border-2 transition-all ${selectedVote === 'tie'
-                                            ? 'border-gray-500 bg-gray-500/10'
-                                            : 'border-[#27272a] hover:border-gray-500/50'
+                                        ? 'border-gray-500 bg-gray-500/10'
+                                        : 'border-[#27272a] hover:border-gray-500/50'
                                         }`}
                                 >
                                     <div className="font-medium text-gray-300">It's a Tie</div>

@@ -1,69 +1,226 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Play, Pause } from 'lucide-react'
+import { useState, useRef, useEffect, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Play, Pause, SkipForward, SkipBack, Share2, AlertCircle } from 'lucide-react'
+import { useEngagement } from '@/hooks/useEngagement'
+import { selectAriaVariant, selectTransitionRounds, AriaVariant } from '@/lib/aria'
+import { createClient } from '@/utils/supabase/client'
 
-interface Round {
-    round_number: number
-    speaker: 'ai1' | 'ai2' | 'facilitator'
+interface DatabaseRound {
+    round: number
+    type: string
+    ai_a_text: string
+    ai_b_text: string
+    ai_a_audio_url?: string
+    ai_b_audio_url?: string
+}
+
+interface ContentItem {
+    speaker: 'ai_a' | 'ai_b' | 'aria'
     content: string
-    word_count: number
+    roundNum?: number
+    type: string
     audio_url?: string
 }
 
 interface DebatePlayerProps {
-    rounds: Round[]
+    debateId: string
+    rounds: DatabaseRound[]
     ai1Name: string
     ai2Name: string
-    facilitatorIntro?: string
-    facilitatorOutro?: string
+    topic: string
+    session: any
     onComplete: () => void
 }
 
 export default function DebatePlayer({
+    debateId,
     rounds,
     ai1Name,
     ai2Name,
-    facilitatorIntro,
-    facilitatorOutro,
+    topic,
+    session,
     onComplete
 }: DebatePlayerProps) {
-    const [currentRound, setCurrentRound] = useState(0)
+    // Session & Persistence
+    const supabase = createClient()
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const [resumePrompt, setResumePrompt] = useState<{ index: number, time: number } | null>(null)
+
+    // Playback State
     const [isPlaying, setIsPlaying] = useState(false)
-    const [currentText, setCurrentText] = useState(facilitatorIntro || '')
+    const [playbackSpeed, setPlaybackSpeed] = useState(1.0)
+    const [highlightProgress, setHighlightProgress] = useState(0)
+    const [audioError, setAudioError] = useState(false)
+    const [preloadedAudio, setPreloadedAudio] = useState<HTMLAudioElement | null>(null)
+
+    // Aria & Tracking
+    const [variant, setVariant] = useState<AriaVariant>('B')
+    const [highestRound, setHighestRound] = useState(0)
+    const { trackEvent } = useEngagement()
     const audioRef = useRef<HTMLAudioElement>(null)
 
-    const allContent = [
-        { speaker: 'facilitator', content: facilitatorIntro || '' },
-        ...rounds,
-        { speaker: 'facilitator', content: facilitatorOutro || '' }
-    ]
-
+    // Select Aria variant
     useEffect(() => {
-        if (currentRound < allContent.length) {
-            setCurrentText(allContent[currentRound].content)
-        } else {
-            onComplete()
+        const v = selectAriaVariant(session, debateId)
+        setVariant(v)
+        trackEvent('debate_started', {
+            debate_id: debateId,
+            session_id: session?.user?.id || 'anonymous',
+            intro_variant: v
+        })
+    }, [debateId, session, trackEvent])
+
+    // Construct Playlist
+    const playlist = useMemo(() => {
+        const items: ContentItem[] = []
+        const transitionRounds = selectTransitionRounds()
+        const storageBase = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/debate-audio`
+
+        // 1. Aria Intro
+        items.push({
+            speaker: 'aria',
+            content: `Today's question: ${topic}`,
+            type: 'Intro',
+            audio_url: `${storageBase}/${debateId}_aria_intro_${variant}.mp3`
+        })
+
+        // 2. Rounds
+        rounds.forEach((round) => {
+            // AI A
+            items.push({
+                speaker: 'ai_a',
+                content: round.ai_a_text,
+                roundNum: round.round,
+                type: round.type,
+                audio_url: round.ai_a_audio_url
+            })
+
+            // Transition
+            if (transitionRounds.includes(round.round) && round.round < 6) {
+                items.push({
+                    speaker: 'aria',
+                    content: "Moderator interjection...",
+                    type: 'Transition',
+                    audio_url: `${storageBase}/${debateId}_aria_transition_r${round.round}.mp3`
+                })
+            }
+
+            // AI B
+            items.push({
+                speaker: 'ai_b',
+                content: round.ai_b_text,
+                roundNum: round.round,
+                type: round.type,
+                audio_url: round.ai_b_audio_url
+            })
+        })
+
+        // 3. Aria Pre-vote
+        items.push({
+            speaker: 'aria',
+            content: "The debate has concluded. Now it's your turn to decide.",
+            type: 'Voting Phase',
+            audio_url: `${storageBase}/${debateId}_aria_prevote_${variant}.mp3`
+        })
+
+        return items
+    }, [rounds, variant, debateId, topic])
+
+    const currentItem = playlist[currentIndex]
+
+    // PART 6: SHARE SPECIFIC TIMESTAMP
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search)
+        const start = params.get('start')
+        if (start) {
+            const idx = parseInt(start)
+            if (!isNaN(idx) && idx < playlist.length) {
+                setCurrentIndex(idx)
+                setIsPlaying(true)
+            }
         }
-    }, [currentRound])
+    }, [playlist.length])
+
+    // PART 4: RESUME PLAYBACK (Load)
+    useEffect(() => {
+        const saved = localStorage.getItem(`debate_progress_${debateId}`)
+        if (saved) {
+            const { index, time, timestamp } = JSON.parse(saved)
+            // Restore if within 24h and progress > 0
+            if (Date.now() - timestamp < 86400000 && index > 0) {
+                setResumePrompt({ index, time })
+            }
+        }
+    }, [debateId])
+
+    // PART 4: RESUME PLAYBACK (Save)
+    useEffect(() => {
+        const saveProgress = () => {
+            if (isPlaying) {
+                localStorage.setItem(`debate_progress_${debateId}`, JSON.stringify({
+                    index: currentIndex,
+                    time: audioRef.current?.currentTime || 0,
+                    timestamp: Date.now()
+                }))
+            }
+        }
+        const interval = setInterval(saveProgress, 5000)
+        return () => clearInterval(interval)
+    }, [currentIndex, isPlaying, debateId])
+
+    // PART 1: AUDIO PRELOADING
+    useEffect(() => {
+        const nextIndex = currentIndex + 1
+        if (nextIndex < playlist.length && playlist[nextIndex].audio_url) {
+            const audio = new Audio(playlist[nextIndex].audio_url)
+            audio.preload = 'auto'
+            setPreloadedAudio(audio)
+        }
+    }, [currentIndex, playlist])
+
+    // PART 2 & PART 3: Speed & Highlight
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.playbackRate = playbackSpeed
+        }
+    }, [playbackSpeed])
+
+    // PART 8: MOBILE BACKGROUND PLAYBACK
+    useEffect(() => {
+        if ('mediaSession' in navigator && currentItem) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: topic,
+                artist: `${getCurrentSpeakerName()} (Round ${currentItem.roundNum || 'Intro'})`,
+                album: 'AI Debate',
+                // artwork: [{ src: '/og-image.png', sizes: '512x512', type: 'image/png' }]
+            })
+            navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true))
+            navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false))
+            navigator.mediaSession.setActionHandler('nexttrack', handleNext)
+            navigator.mediaSession.setActionHandler('previoustrack', handlePrev)
+        }
+    }, [currentItem, topic, isPlaying])
+
+    // Handlers
+    const handleTimeUpdate = () => {
+        if (audioRef.current && audioRef.current.duration) {
+            setHighlightProgress(audioRef.current.currentTime / audioRef.current.duration)
+        }
+    }
 
     const handlePlayPause = () => {
+        if (!currentItem) return
         if (isPlaying) {
             audioRef.current?.pause()
+            trackAudioEvent('pause', {})
         } else {
-            // If audio URL exists, play it
-            if (allContent[currentRound].audio_url) {
-                audioRef.current?.play()
-            } else {
-                // Fallback: auto-advance after reading time
-                const wordsPerMinute = 150
-                const words = allContent[currentRound].content.split(' ').length
-                const durationMs = (words / wordsPerMinute) * 60 * 1000
-
-                setTimeout(() => {
-                    handleNext()
-                }, durationMs)
+            if (currentItem.audio_url || audioError) {
+                // If error, we might try to play browser TTS?
+                // For now, let standard behavior handle it or error handler
+                audioRef.current?.play().catch(e => console.warn("Play error", e))
+                trackAudioEvent('play', {})
             }
         }
         setIsPlaying(!isPlaying)
@@ -71,84 +228,241 @@ export default function DebatePlayer({
 
     const handleNext = () => {
         setIsPlaying(false)
-        setCurrentRound(prev => prev + 1)
+        setAudioError(false)
+        if (currentIndex < playlist.length) {
+            trackAudioEvent('skip', { from: currentIndex, to: currentIndex + 1 })
+            setCurrentIndex(prev => prev + 1)
+        } else {
+            onComplete()
+        }
     }
 
-    const getCurrentSpeaker = () => {
-        const item = allContent[currentRound]
-        if (item.speaker === 'facilitator') return 'Facilitator'
-        if (item.speaker === 'ai1') return ai1Name
-        if (item.speaker === 'ai2') return ai2Name
-        return ''
+    const handlePrev = () => {
+        setIsPlaying(false)
+        setAudioError(false)
+        if (currentIndex > 0) {
+            trackAudioEvent('replay', { from: currentIndex, to: currentIndex - 1 })
+            setCurrentIndex(prev => prev - 1)
+        }
+    }
+
+    // PART 7: ANALYTICS helper
+    const trackAudioEvent = async (event: string, data: object) => {
+        try {
+            await supabase.from('audio_analytics').insert({
+                session_id: session?.user?.id || 'anonymous',
+                debate_id: debateId,
+                event,
+                round_index: currentIndex,
+                audio_position: audioRef.current?.currentTime || 0,
+                metadata: data
+            })
+        } catch (e) {
+            // Silently ignore analytics errors - don't break UX
+            console.debug('Analytics skipped:', e)
+        }
+    }
+
+    // PART 9: FALLBACK TTS & ERROR HANDLING
+    const handleAudioError = () => {
+        console.warn("Audio load failed:", currentItem?.audio_url)
+        setAudioError(true)
+
+        // Attempt Browser TTS Fallback automatically
+        if ('speechSynthesis' in window && isPlaying && !audioError) {
+            const utterance = new SpeechSynthesisUtterance(currentItem.content)
+            utterance.rate = playbackSpeed
+            utterance.onend = () => {
+                handleNext()
+            }
+            // Simple fallback - assumes English
+            speechSynthesis.speak(utterance)
+            trackAudioEvent('tts_fallback', { text_len: currentItem.content.length })
+            return; // Don't stop playing state
+        }
+
+        setIsPlaying(false)
+    }
+
+    const handleResume = () => {
+        if (resumePrompt) {
+            setCurrentIndex(resumePrompt.index)
+            // Optional: seek to time? audioRef not ready yet.
+            // setShouldSeek(resumePrompt.time)
+            setResumePrompt(null)
+            setIsPlaying(true)
+        }
+    }
+
+    const handleShare = () => {
+        const url = `${window.location.origin}/debate/${debateId}?start=${currentIndex}`
+        navigator.clipboard.writeText(url)
+        // Ideally show toast
+        alert("Link copied to clipboard!")
+        trackAudioEvent('share_timestamp', { url })
+    }
+
+    // Helper fns
+    const getCurrentSpeakerName = () => {
+        if (!currentItem) return ''
+        if (currentItem.speaker === 'aria') return 'Aria (Moderator)'
+        return currentItem.speaker === 'ai_a' ? ai1Name : ai2Name
     }
 
     const getSpeakerColor = () => {
-        const item = allContent[currentRound]
-        if (item.speaker === 'ai1') return 'bg-purple-600'
-        if (item.speaker === 'ai2') return 'bg-amber-500'
-        return 'bg-gray-600'
+        if (!currentItem) return 'bg-gray-600'
+        if (currentItem.speaker === 'aria') return 'bg-gradient-to-br from-blue-500 to-purple-600'
+        return currentItem.speaker === 'ai_a' ? 'bg-purple-600' : 'bg-amber-500'
     }
 
+    if (!currentItem) return <div className="p-8 text-center text-gray-500">Loading debate...</div>
+
     return (
-        <div className="bg-[#171717] border border-[#27272a] rounded-2xl p-8">
-            {/* Progress */}
+        <div
+            className="bg-[#171717] border border-[#27272a] rounded-2xl p-8 shadow-xl relative"
+            // PART 10: ACCESSIBILITY
+            role="application"
+            aria-label="AI Debate Player"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === ' ') { handlePlayPause(); e.preventDefault() }
+                if (e.key === 'ArrowRight') handleNext()
+                if (e.key === 'ArrowLeft') handlePrev()
+            }}
+        >
+            {/* Resume Prompt */}
+            <AnimatePresence>
+                {resumePrompt && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute top-4 right-4 z-50 bg-blue-900 border border-blue-700 text-blue-100 px-4 py-2 rounded-lg shadow-lg flex items-center gap-3"
+                    >
+                        <span className="text-sm">Resume from Round {resumePrompt.index}?</span>
+                        <div className="flex gap-2">
+                            <button onClick={handleResume} className="text-xs bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded font-bold">Yes</button>
+                            <button onClick={() => setResumePrompt(null)} className="text-xs hover:bg-blue-800 px-2 py-1 rounded">No</button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-400">
-                        Round {Math.min(currentRound + 1, allContent.length)} of {allContent.length}
+                    <span className="text-sm font-medium text-blue-400 uppercase tracking-wider">
+                        {currentItem.roundNum ? `Round ${currentItem.roundNum} • ` : ''} {currentItem.type} {audioError && !('speechSynthesis' in window) && <span className="text-yellow-500 ml-2 text-xs flex items-center inline-flex gap-1"><AlertCircle className="w-3 h-3" /> Generating audio...</span>}
                     </span>
-                    <span className="text-sm text-gray-400">
-                        {getCurrentSpeaker()}
-                    </span>
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm text-gray-400">
+                            {getCurrentSpeakerName()}
+                        </span>
+                        {/* PART 6: Share Button */}
+                        <button onClick={handleShare} className="text-gray-500 hover:text-white transition-colors" title="Share this moment">
+                            <Share2 className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
-                <div className="h-2 bg-[#0a0a0a] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-[#0a0a0a] rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-blue-500 transition-all"
-                        style={{ width: `${((currentRound + 1) / allContent.length) * 100}%` }}
+                        className="h-full bg-blue-500 transition-all duration-300 ease-out"
+                        style={{ width: `${((currentIndex + 1) / playlist.length) * 100}%` }}
                     />
                 </div>
             </div>
 
-            {/* Speaker Avatar */}
-            <div className="flex justify-center mb-6">
+            {/* Avatar */}
+            <div className="flex justify-center mb-8 relative">
                 <motion.div
-                    animate={isPlaying ? { scale: [1, 1.05, 1] } : {}}
-                    transition={{ duration: 0.5, repeat: isPlaying ? Infinity : 0 }}
-                    className={`w-24 h-24 rounded-full ${getSpeakerColor()} flex items-center justify-center text-white text-3xl font-bold`}
+                    key={currentItem.speaker}
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                    className={`w-24 h-24 rounded-full flex items-center justify-center shadow-lg shadow-black/50 relative overflow-hidden ${getSpeakerColor()}`}
                 >
-                    {getCurrentSpeaker()[0]}
+                    <span className="text-white text-3xl font-bold relative z-10">
+                        {currentItem.speaker === 'aria' ? '✦' : getCurrentSpeakerName()[0]}
+                    </span>
+                    {isPlaying && !audioError && (
+                        <motion.div
+                            animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="absolute inset-0 bg-white/20 rounded-full"
+                        />
+                    )}
                 </motion.div>
+
+                {/* PART 2: Speed Control (Positioned absolutely or near avatar?) */}
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-1 hidden sm:flex">
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider text-center">Speed</span>
+                    {[1.0, 1.5, 2.0].map(speed => (
+                        <button
+                            key={speed}
+                            onClick={() => setPlaybackSpeed(speed)}
+                            className={`px-2 py-1 text-xs rounded transition-colors ${playbackSpeed === speed ? 'bg-blue-600 text-white' : 'bg-[#27272a] text-gray-400 hover:bg-[#3a3a3a]'
+                                }`}
+                        >
+                            {speed}x
+                        </button>
+                    ))}
+                </div>
             </div>
 
-            {/* Text Display */}
-            <div className="bg-[#0a0a0a] rounded-lg p-6 mb-6 min-h-[200px]">
-                <p className="text-lg leading-relaxed">
-                    {currentText}
+            {/* Text Display - PART 3: Highlight */}
+            <div className="bg-[#0a0a0a] border border-white/5 rounded-xl p-6 mb-8 min-h-[160px] shadow-inner flex items-center justify-center text-center">
+                <p className="text-lg leading-relaxed text-gray-200">
+                    {currentItem.content ? (
+                        <>
+                            <span className="text-white transition-colors duration-200">
+                                {currentItem.content.slice(0, Math.floor(currentItem.content.length * highlightProgress))}
+                            </span>
+                            <span className="text-gray-500 transition-colors duration-200">
+                                {currentItem.content.slice(Math.floor(currentItem.content.length * highlightProgress))}
+                            </span>
+                        </>
+                    ) : (
+                        <span className="text-gray-500 italic flex items-center gap-2 justify-center">
+                            Loading content...
+                        </span>
+                    )}
                 </p>
+                {/* Fallback Message inline */}
+                {audioError && isPlaying && 'speechSynthesis' in window && (
+                    <div className="absolute bottom-24 text-xs text-yellow-500">Using backup voice (Standard audio generating...)</div>
+                )}
             </div>
 
-            {/* Controls */}
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-6 relative">
+                {/* Mobile Speed Control (Visible only on small screens) */}
+                <button
+                    className="absolute left-0 sm:hidden text-xs text-gray-400 bg-[#27272a] px-2 py-1 rounded"
+                    onClick={() => setPlaybackSpeed(s => s >= 2 ? 1 : s + 0.5)}
+                >
+                    {playbackSpeed}x
+                </button>
+
+                <button onClick={handlePrev} disabled={currentIndex === 0} className="p-2 text-gray-400 hover:text-white disabled:opacity-30">
+                    <SkipBack className="w-6 h-6" />
+                </button>
                 <button
                     onClick={handlePlayPause}
-                    className="w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center transition-colors"
+                    className="w-16 h-16 rounded-full bg-blue-600 hover:bg-blue-500 flex items-center justify-center transition-all hover:scale-105 shadow-lg shadow-blue-900/20"
                 >
-                    {isPlaying ? (
-                        <Pause className="w-8 h-8" />
-                    ) : (
-                        <Play className="w-8 h-8 ml-1" />
-                    )}
+                    {isPlaying ? <Pause className="w-7 h-7 fill-white" /> : <Play className="w-7 h-7 fill-white ml-1" />}
+                </button>
+                <button onClick={handleNext} disabled={currentIndex >= playlist.length} className="p-2 text-gray-400 hover:text-white disabled:opacity-30">
+                    <SkipForward className="w-6 h-6" />
                 </button>
             </div>
 
-            {/* Hidden audio element */}
-            {allContent[currentRound]?.audio_url && (
-                <audio
-                    ref={audioRef}
-                    src={allContent[currentRound].audio_url}
-                    onEnded={handleNext}
-                />
-            )}
+            <audio
+                ref={audioRef}
+                src={currentItem.audio_url}
+                onEnded={handleNext}
+                onError={handleAudioError}
+                onTimeUpdate={handleTimeUpdate}
+                autoPlay={false}
+            />
         </div>
     )
 }
