@@ -6,6 +6,7 @@ import confetti from 'canvas-confetti'
 import { useEffect, useState } from 'react'
 import { RepIDBreakdown } from '@/lib/repid'
 import { useRouter } from 'next/navigation'
+import { getRandomMessage, POST_VOTE_PROMPTS, UNLOCK_PROMPTS, getUnlockMessage } from '@/lib/viral-messages'
 
 interface ResultsModalProps {
     isOpen: boolean
@@ -54,11 +55,21 @@ export default function ResultsModal({
     const ai2Percent = 100 - ai1Percent
 
     const handleShare = async () => {
-        const text = `I just voted in "${topic}" on AIDebate.io! \nWinner: ${ai1Votes > ai2Votes ? ai1Name : ai2Name} \n\nCheck it out: https://aidebate.io`
+        const prompt = getRandomMessage(POST_VOTE_PROMPTS, {
+            vote_count: totalVotes,
+            winner: ai1Votes > ai2Votes ? ai1Name : ai2Name,
+            streak: newStreak,
+            percent_a: ai1Percent,
+            percent_b: ai2Percent,
+            margin: Math.abs(ai1Percent - ai2Percent)
+        })
+
+        const text = `${prompt} \n\nVote now on AIDebate.io`
         try {
             await navigator.clipboard.writeText(text)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
+            // Track analytics here if needed
         } catch (err) {
             console.error('Failed to copy', err)
         }

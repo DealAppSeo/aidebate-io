@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
+import { getRandomMessage, ARIA_CLOSING_LINES } from '@/lib/viral-messages'
 
 interface VoteModalProps {
     isOpen: boolean
@@ -20,6 +21,13 @@ export default function VoteModal({
     ai2Name
 }: VoteModalProps) {
     const [selectedVote, setSelectedVote] = useState<'ai_a' | 'ai_b' | 'tie' | null>(null)
+    const [headerText, setHeaderText] = useState('')
+
+    useEffect(() => {
+        if (isOpen) {
+            setHeaderText(getRandomMessage(ARIA_CLOSING_LINES))
+        }
+    }, [isOpen])
 
     const handleSubmit = () => {
         if (selectedVote) {
@@ -57,8 +65,8 @@ export default function VoteModal({
                                 </button>
                             </div>
 
-                            <p className="text-gray-400 mb-6">
-                                Who made the stronger argument?
+                            <p className="text-gray-400 mb-6 italic">
+                                "{headerText}"
                             </p>
 
                             {/* Vote Buttons */}
