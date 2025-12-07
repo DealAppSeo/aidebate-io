@@ -30,9 +30,11 @@ export async function GET(request: Request) {
         .single()
 
     let voterChoice = 'Unknown'
-    if (vote.vote_choice === 'ai_a') voterChoice = debateInfo.ai_a_name
-    else if (vote.vote_choice === 'ai_b') voterChoice = debateInfo.ai_b_name
-    else voterChoice = 'Tie'
+    if (debateInfo) {
+      if (vote.vote_choice === 'ai_a') voterChoice = debateInfo.ai_a_name
+      else if (vote.vote_choice === 'ai_b') voterChoice = debateInfo.ai_b_name
+      else voterChoice = 'Tie'
+    }
 
     return NextResponse.json({ voterChoice })
 }
