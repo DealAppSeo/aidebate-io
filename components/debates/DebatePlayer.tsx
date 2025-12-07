@@ -247,7 +247,7 @@ export default function DebatePlayer({
     }
 
     // PART 7: ANALYTICS helper
-    const trackAudioEvent = async (event: string, data: object) => {
+    const trackAudioEvent = async (event: string, data: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         try {
             await supabase.from('audio_analytics').insert({
                 session_id: session?.user?.id || 'anonymous',

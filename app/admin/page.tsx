@@ -244,7 +244,9 @@ export default function AdminDashboard() {
 }
 
 // Metric Card Component
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function MetricCard({ icon: Icon, label, value, subtext, status = 'neutral' }: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const statusColors: any = {
         good: 'text-green-400',
         warning: 'text-yellow-400',
@@ -269,6 +271,7 @@ function MetricCard({ icon: Icon, label, value, subtext, status = 'neutral' }: a
 }
 
 // Provider Row Component
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ProviderRow({ provider }: any) {
     const isHealthy = !provider.circuit_open && provider.enabled
 
@@ -299,7 +302,9 @@ function ProviderRow({ provider }: any) {
 }
 
 // Event Row Component
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function EventRow({ event }: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const icons: any = {
         scale_up: <TrendingUp className="w-4 h-4 text-green-400" />,
         scale_down: <TrendingDown className="w-4 h-4 text-blue-400" />,

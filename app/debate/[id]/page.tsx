@@ -217,7 +217,7 @@ export default function DebatePage() {
                 {isChallenge && challengeData && (
                     <div className="bg-gradient-to-r from-purple-900/80 to-blue-900/80 p-4 text-center rounded-xl mb-6 border border-purple-500/50 shadow-lg animate-in fade-in slide-in-from-top-4">
                         <p className="text-white font-bold text-lg mb-1">
-                            🎯 You've Been Challenged!
+                            🎯 You&apos;ve Been Challenged!
                         </p>
                         <p className="text-purple-200">
                             Your friend voted for <strong className="text-white">{challengeData.voterChoice}</strong>.

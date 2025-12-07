@@ -2,15 +2,20 @@ import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import webpush from 'web-push'
 
-if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
-    webpush.setVapidDetails(
-        'mailto:support@aidebate.io',
-        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-        process.env.VAPID_PRIVATE_KEY!
-    )
-}
+
 
 export async function POST(request: Request) {
+    if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+        try {
+            webpush.setVapidDetails(
+                'mailto:support@aidebate.io',
+                process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+                process.env.VAPID_PRIVATE_KEY
+            )
+        } catch (e) {
+            console.error("Failed to set VAPID details", e)
+        }
+    }
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!

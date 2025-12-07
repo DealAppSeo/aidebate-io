@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { getRandomMessage, ARIA_CLOSING_LINES } from '@/lib/viral-messages'
+import confetti from 'canvas-confetti'
 
 interface VoteModalProps {
     isOpen: boolean
@@ -31,6 +32,7 @@ export default function VoteModal({
 
     const handleSubmit = () => {
         if (selectedVote) {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } })
             onVote(selectedVote)
             onClose()
         }

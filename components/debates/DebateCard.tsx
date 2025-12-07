@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { Share2, Copy, Check } from 'lucide-react'
+import { useState } from 'react'
 
 interface Debate {
     id: string
@@ -37,6 +39,23 @@ export default function DebateCard({ debate }: DebateCardProps) {
     const getAIColor = (model: string) => {
         const key = model.toLowerCase().split('-')[0]
         return AI_COLORS[key] || 'bg-gray-600'
+    }
+
+    const [copied, setCopied] = useState(false)
+
+    const handleShare = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        const text = `I just watched ${debate.ai_a_name} vs ${debate.ai_b_name} debate '${debate.topic}'. Who wins? 🎙️ https://aidebate.io/debate/${debate.id} #AIDebate`
+        window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank')
+    }
+
+    const handleCopy = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        navigator.clipboard.writeText(`https://aidebate.io/debate/${debate.id}`)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
     }
 
     return (
@@ -104,6 +123,23 @@ export default function DebateCard({ debate }: DebateCardProps) {
                 {/* Stats */}
                 <div className="flex items-center justify-between text-sm text-gray-400">
                     <span>{totalVotes} votes</span>
+
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleCopy}
+                            className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                            title="Copy Link"
+                        >
+                            {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                        <button
+                            onClick={handleShare}
+                            className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                            title="Share on X"
+                        >
+                            <Share2 className="w-4 h-4" />
+                        </button>
+                    </div>
                 </div>
             </motion.div>
         </Link>
