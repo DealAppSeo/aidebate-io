@@ -47,19 +47,30 @@ export default function DebatePlayer({
     const [hasWakeLock, setWakeLock] = useState(false);
     const [audioReady, setAudioReady] = useState(false);
 
+    // Refs for closure-safe access in callbacks
+    const roundsRef = useRef(rounds);
+    const indexRef = useRef(currentRoundIndex);
+
+    useEffect(() => {
+        roundsRef.current = rounds;
+        indexRef.current = currentRoundIndex;
+    }, [rounds, currentRoundIndex]);
+
     // Initial Setup
     useEffect(() => {
         setRounds(rounds);
         audioEngine.preloadRounds(rounds);
 
-        // Setup Callbacks
+        // Setup Callbacks with Ref access to avoid closure staleness
         audioEngine.setCallbacks(
             (t, d) => setProgress(t, d),
             () => {
+                const currentIdx = indexRef.current;
+                const totalRounds = roundsRef.current.length;
+
                 // On End
-                if (currentRoundIndex < rounds.length - 1) {
-                    nextRound(); // Store updates index
-                    // Effect below will trigger play of next round
+                if (currentIdx < totalRounds - 1) {
+                    nextRound();
                 } else {
                     setPlaying(false);
                     onComplete();
@@ -70,7 +81,7 @@ export default function DebatePlayer({
         return () => {
             audioEngine.stop();
         };
-    }, []);
+    }, []); // Run once on mount
 
     // Wake Lock
     useEffect(() => {
@@ -275,7 +286,7 @@ export default function DebatePlayer({
                     </button>
 
                     <button onClick={nextRound} disabled={currentRoundIndex === rounds.length - 1} className="p-4 text-gray-400 hover:text-white disabled:opacity-30 transition-transform active:scale-95">
-                        {currentRoundIndex === rounds.length - 1 ? <CheckCircle2 className="w-8 h-8 text-green-500" /> : <SkipForward className="w-8 h-8" />}
+                        <CheckCircle2 className="w-8 h-8 text-green-500" /> : <SkipForward className="w-8 h-8" />}
                     </button>
                 </div>
             </div>
