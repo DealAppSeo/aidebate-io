@@ -223,93 +223,99 @@ export default function IntroExperience({ onComplete, skipEnabled = true }: Intr
     return (
         <AnimatePresence>
             <motion.div
-                className="fixed inset-0 bg-[#0a0a0a] z-50 flex items-center justify-center cursor-pointer overflow-hidden"
-                onClick={handleInteraction}
+                className="fixed inset-0 bg-black z-[99999] flex items-center justify-center overflow-hidden"
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 1 }}
+                onClick={handleInteraction}
             >
-                {/* Phase: Black - Nothing */}
-
                 {/* Phase: Sonic - Particle convergence */}
-                {phase === 'sonic' && !audioContextStarted.current && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-center z-20"
-                    >
+                {
+                    phase === 'sonic' && !audioContextStarted.current && (
                         <motion.div
-                            animate={{ scale: [1, 1.1, 1] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                            className="text-6xl mb-4"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-center z-20"
                         >
-                            ⚡
+                            <motion.div
+                                animate={{ scale: [1, 1.1, 1] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="text-6xl mb-4"
+                            >
+                                ⚡
+                            </motion.div>
+                            <p className="text-gray-400 text-lg">Tap to begin</p>
                         </motion.div>
-                        <p className="text-gray-400 text-lg">Tap to begin</p>
-                    </motion.div>
-                )}
+                    )
+                }
 
                 {/* Phase: Sonic - Particles animating */}
-                {phase === 'sonic' && audioContextStarted.current && (
-                    <ParticleConvergence />
-                )}
+                {
+                    phase === 'sonic' && audioContextStarted.current && (
+                        <ParticleConvergence />
+                    )
+                }
 
                 {/* Phase: Heartbeat & Aria - Waveform */}
-                {(phase === 'heartbeat' || phase === 'aria') && (
-                    <div className="flex flex-col items-center z-20">
-                        {/* Logo */}
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.5 }}
-                            animate={{
-                                opacity: 1,
-                                scale: [1, 1.02, 1],
-                            }}
-                            transition={{
-                                opacity: { duration: 0.5 },
-                                scale: { duration: 1.2, repeat: Infinity, ease: 'easeInOut' }
-                            }}
-                            className="text-5xl font-bold text-white mb-8 flex items-center gap-3"
-                        >
-                            <span className="text-blue-500">⚡</span>
-                            <span>AIDebate</span>
-                            <span className="text-blue-500">.io</span>
-                        </motion.div>
-
-                        {/* Waveform visualization */}
-                        <canvas
-                            ref={waveformRef}
-                            width={400}
-                            height={100}
-                            className="rounded-lg"
-                        />
-
-                        {/* Aria speaking indicator */}
-                        {phase === 'aria' && (
+                {
+                    (phase === 'heartbeat' || phase === 'aria') && (
+                        <div className="flex flex-col items-center z-20">
+                            {/* Logo */}
                             <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="mt-6 flex items-center gap-2"
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{
+                                    opacity: 1,
+                                    scale: [1, 1.02, 1],
+                                }}
+                                transition={{
+                                    opacity: { duration: 0.5 },
+                                    scale: { duration: 1.2, repeat: Infinity, ease: 'easeInOut' }
+                                }}
+                                className="text-5xl font-bold text-white mb-8 flex items-center gap-3"
                             >
-                                <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
-                                <span className="text-purple-400 text-sm">Aria</span>
+                                <span className="text-blue-500">⚡</span>
+                                <span>AIDebate</span>
+                                <span className="text-blue-500">.io</span>
                             </motion.div>
-                        )}
-                    </div>
-                )}
+
+                            {/* Waveform visualization */}
+                            <canvas
+                                ref={waveformRef}
+                                width={400}
+                                height={100}
+                                className="rounded-lg"
+                            />
+
+                            {/* Aria speaking indicator */}
+                            {phase === 'aria' && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="mt-6 flex items-center gap-2"
+                                >
+                                    <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
+                                    <span className="text-purple-400 text-sm">Aria</span>
+                                </motion.div>
+                            )}
+                        </div>
+                    )
+                }
 
                 {/* Skip button */}
-                {canSkip && skipEnabled && phase !== 'done' && (
-                    <motion.button
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        onClick={(e) => { e.stopPropagation(); handleSkip() }}
-                        className="absolute bottom-8 right-8 text-gray-500 hover:text-white text-sm transition z-50 uppercase tracking-widest"
-                    >
-                        Skip →
-                    </motion.button>
-                )}
-            </motion.div>
-        </AnimatePresence>
+                {
+                    canSkip && skipEnabled && phase !== 'done' && (
+                        <motion.button
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            onClick={(e) => { e.stopPropagation(); handleSkip() }}
+                            className="absolute bottom-8 right-8 text-gray-500 hover:text-white text-sm transition z-50 uppercase tracking-widest"
+                        >
+                            Skip →
+                        </motion.button>
+                    )
+                }
+            </motion.div >
+        </AnimatePresence >
     )
 }
 
