@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
     domains: ['qnnpjhlxljtqyigedwkb.supabase.co', 'ajpxpmkgkcaomqblkkme.supabase.co'],
   },
   swcMinify: true,
+  reactStrictMode: false,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },

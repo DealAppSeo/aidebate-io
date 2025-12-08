@@ -3,7 +3,8 @@ import type { Metadata } from 'next'
 
 import { Inter, JetBrains_Mono } from 'next/font/google'
 
-import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister'
+import ErrorBoundary from '@/components/ErrorBoundary'
+import ServiceWorkerProvider from '@/components/ServiceWorkerProvider'
 import Footer from '@/components/layout/Footer'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
@@ -22,8 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans`}>
-        <ServiceWorkerRegister />
-        {children}
+        <ErrorBoundary>
+          <ServiceWorkerProvider>
+            {children}
+          </ServiceWorkerProvider>
+        </ErrorBoundary>
         <Footer />
       </body>
     </html>
