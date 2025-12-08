@@ -19,10 +19,15 @@ export async function GET(request: Request) {
         .from('user_sessions')
         .select('*')
         .eq('session_id', sessionId)
-        .single()
+        .maybeSingle()
 
     if (error) {
+        console.error('API Session GET Error:', error)
         return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    if (!data) {
+        return NextResponse.json({ error: 'Session not found' }, { status: 404 })
     }
 
     return NextResponse.json({ session: data })
