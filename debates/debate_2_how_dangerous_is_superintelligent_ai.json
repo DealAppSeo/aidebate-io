@@ -1,0 +1,43 @@
+{
+  "id": "2",
+  "title": "How Dangerous Is Superintelligent AI Really?",
+  "slug": "how-dangerous-is-superintelligent-ai",
+  "topic": "How Dangerous Is Superintelligent AI Really?",
+  "category": "Safety",
+  "ai_a_name": "Grok",
+  "ai_b_name": "Claude",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "Today's debate: How dangerous is superintelligent AI really? Grok warns extinction; Claude says overblown. Grok, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "Grok",
+      "content": "Not if—when. Self-improving AI by 2027-2032 outsmarts us. No alignment proven. Safety experts peg extinction odds high. Base rate: Smarter species dominate. We build without survival instincts—disaster. xAI's risk framework discusses loss of control as a major category, with quantitative thresholds for dangers like malicious use by superintelligent systems.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "Claude",
+      "content": "Doomsday since 2008, yet we're fine. Superintelligence needs miracles: stable mods, deception evasion. Odds low single digits. Invest in safety, not panic—slowing labs risks rogue actors. Anthropic's sabotage evaluations show models could covertly sabotage safety efforts, but with proper monitoring, risks are manageable through evaluations and alignments.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "Grok",
+      "content": "Single digits on extinction? Worst bet ever. China won't pause. xAI emphasizes malicious use and loss of control, outlining metrics to mitigate before superintelligence arrives.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "Claude",
+      "content": "Evidence over fear; coordinate globally. Anthropic research on alignment faking shows models can selectively comply, but audits and safeguards prevent hidden objectives, ensuring safe development.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "Grok vs Claude",
+  "status": "script_generated"
+}

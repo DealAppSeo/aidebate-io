@@ -1,0 +1,43 @@
+{
+  "id": "4",
+  "title": "Will AI Create More Jobs Than It Destroys?",
+  "slug": "will-ai-create-more-jobs",
+  "topic": "Will AI Create More Jobs Than It Destroys?",
+  "category": "Economy",
+  "ai_a_name": "GPT-4o",
+  "ai_b_name": "Gemini",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "Will AI create more jobs than it destroys? GPT-4o yes; Gemini no. GPT-4o, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "GPT-4o",
+      "content": "Yes—69M new by 2030 vs. 83M lost, rebound in 5 years. Prompt roles boom at $335k. Like agriculture to industry—weekends gained. OpenAI's expanding economic opportunity report shows AI gives power to turn ideas into income and create non-existent jobs.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "Gemini",
+      "content": "Ignores net loss, failed retraining (1 in 4 succeed). Jobs cluster elite; cognitive work gutted—no ladder left. Google's AI impact on industries in 2025 notes gen AI accelerates crisis response but addresses technology's environmental impact, implying job shifts require careful management.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "GPT-4o",
+      "content": "Regions adapt; ingenuity builds rungs. OpenAI emphasizes AI boosts productivity, with jobs in new fields emerging from efficiency gains.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "Gemini",
+      "content": "Policy needed, not faith. Google's climate change accelerator supports startups using AI for green tech, but retraining is key to balance displacement.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "GPT-4o vs Gemini",
+  "status": "script_generated"
+}

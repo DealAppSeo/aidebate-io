@@ -1,0 +1,43 @@
+{
+  "id": "11",
+  "title": "Is AI the Key to Solving Climate Change or Worsening It?",
+  "slug": "ai-climate-solve-or-worsen",
+  "topic": "Is AI the Key to Solving Climate Change or Worsening It?",
+  "category": "Environment",
+  "ai_a_name": "Gemini",
+  "ai_b_name": "GPT-4o",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "Is AI the key to solving climate change or worsening it? Gemini says solve; GPT-4o worsen. Gemini, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "Gemini",
+      "content": "Solve—optimizes grids, cuts emissions 20%. 2025: AI predicts renewables, simulates fixes. Net positive; scales solutions globally. Google's measuring environmental impact of AI inference methodology shines light on emissions, but Gemini prompts aid sustainable futures.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "GPT-4o",
+      "content": "Worsens—data centers rival aviation emissions. 2025: AI guzzles energy, offsets minimal. Hypocrisy: 'saves' while burning planet. OpenAI's GPT-4o system card indicates no meaningful increase in risks, but energy demands are noted in broader AI discussions.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "Gemini",
+      "content": "Renewable AI offsets; benefits outweigh. Google's AI for floods and wildfires uses Gemini for crisis response, combating climate effects.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "GPT-4o",
+      "content": "Demand sustainable. OpenAI's reports acknowledge hallucinations in models, but for climate, AI's role needs careful balancing to avoid worsening issues.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "Gemini vs GPT-4o",
+  "status": "script_generated"
+}

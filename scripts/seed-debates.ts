@@ -3,6 +3,9 @@
 
 import { createClient } from '@supabase/supabase-js'
 import fs from 'fs/promises'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '.env.local' })
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,19 +18,42 @@ async function seedDebate(debateFile: string) {
     const content = await fs.readFile(`./debates/${debateFile}`, 'utf-8')
     const debate = JSON.parse(content)
 
-    const { data, error } = await supabase
+    // Lookup by slug
+    const { data: existing } = await supabase
         .from('debates')
-        .insert([debate])
-        .select()
+        .select('id')
+        .eq('slug', debate.slug)
         .single()
 
-    if (error) {
-        console.error(`  ❌ Error: ${error.message}`)
-        throw error
+    let result;
+    if (existing) {
+        console.log(`   Detailed: Updating existing debate ${existing.id} (${debate.slug})`)
+        // Remove id from debate object to avoid conflict/error if it differs
+        const { id, ...updatePayload } = debate;
+        const { data, error } = await supabase
+            .from('debates')
+            .update(updatePayload)
+            .eq('id', existing.id)
+            .select()
+            .single()
+
+        if (error) throw error
+        result = data
+    } else {
+        console.log(`   Detailed: Inserting new debate (${debate.slug})`)
+        const { id, ...insertPayload } = debate; // let DB generate ID
+        const { data, error } = await supabase
+            .from('debates')
+            .insert([insertPayload])
+            .select()
+            .single()
+
+        if (error) throw error
+        result = data
     }
 
-    console.log(`  ✅ Seeded debate: ${data.id}`)
-    return data
+    console.log(`  ✅ Seeded debate: ${result.id}`)
+    return result
 }
 
 async function main() {

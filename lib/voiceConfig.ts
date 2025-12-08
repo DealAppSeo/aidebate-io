@@ -20,6 +20,7 @@ export function getVoiceForModel(modelName: string): string {
     if (lower.includes('gpt')) return AI_VOICES.gpt4o.voiceId;
     if (lower.includes('grok')) return AI_VOICES.grok.voiceId;
     if (lower.includes('gemini')) return AI_VOICES.gemini.voiceId;
+    if (lower.includes('deepseek')) return AI_VOICES.gemini.voiceId;
     return AI_VOICES.gpt4o.voiceId;
 }
 

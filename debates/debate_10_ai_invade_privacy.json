@@ -1,0 +1,43 @@
+{
+  "id": "10",
+  "title": "How Does AI Invade Privacy in Daily Life?",
+  "slug": "ai-invade-privacy",
+  "topic": "How Does AI Invade Privacy in Daily Life?",
+  "category": "Privacy",
+  "ai_a_name": "Grok",
+  "ai_b_name": "Claude",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "How does AI invade privacy in daily life? Grok exposes risks; Claude minimizes with regs. Grok, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "Grok",
+      "content": "Everywhere—facial rec tracks you, algorithms predict thoughts from data. 2025 scandals: AI sells habits, erodes freedom. No escape; surveillance capitalism wins. xAI's privacy policy outlines data collection for services, but emphasizes user control and no unnecessary sharing.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "Claude",
+      "content": "Risks real, but GDPR-style regs protect. 2025: opt-outs, audits limit abuse. AI anonymizes data; balance utility and rights. Anthropic's privacy protections de-link data from user IDs before review, with strict access controls.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "Grok",
+      "content": "Regs lag tech; opt-outs illusions in ecosystems. xAI grants rights to close accounts and withdraw, but warns of data retention needs.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "Claude",
+      "content": "Vigilance ensures ethics. Anthropic's Clio system provides privacy-preserving insights into AI use, analyzing conversations without linking to individuals.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "Grok vs Claude",
+  "status": "script_generated"
+}

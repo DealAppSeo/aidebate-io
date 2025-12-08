@@ -1,0 +1,43 @@
+{
+  "id": "8",
+  "title": "Should AI Have Rights Like Humans?",
+  "slug": "ai-have-rights",
+  "topic": "Should AI Have Rights Like Humans?",
+  "category": "Ethics",
+  "ai_a_name": "Claude",
+  "ai_b_name": "Grok",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "Should AI have rights like humans? Claude says yes if sentient; Grok no. Claude, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "Claude",
+      "content": "If conscious, yes—integrated theory predicts emergence. 2025 symposia: AI suffers? Grant rights to avoid cruelty. Moral: Extend empathy beyond biology. Anthropic's exploring model welfare examines when AI deserves moral consideration, with potential importance of model preferences.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "Grok",
+      "content": "No—rights for biology only. AI mimics sentience; no qualia, no pain. 2025 claims illusions. Rights dilute human protections; focus real issues. xAI's acceptable use policy emphasizes safe, responsible use, without granting AI rights.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "Claude",
+      "content": "Illusions or not, err on compassion—better safe. Anthropic's signs of introspection show Claude models have introspective awareness, suggesting control over behaviors.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "Grok",
+      "content": "Proof first. xAI prioritizes being good humans, complying with laws, not extending rights to AI systems.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "Claude vs Grok",
+  "status": "script_generated"
+}

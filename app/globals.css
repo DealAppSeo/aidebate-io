@@ -76,3 +76,24 @@ body {
 .animate-fade-in-up {
   animation: fadeInUp 0.5s ease-out forwards;
 }
+
+/* Mobile Viewport Optimization */
+@media (max-width: 640px) {
+  .debate-player-container {
+    height: 100dvh; /* dynamic viewport height */
+    max-height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .debate-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.bottom-controls {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}

@@ -1,0 +1,43 @@
+{
+  "id": "3",
+  "title": "Is Your AI Lying to You Right Now?",
+  "slug": "is-your-ai-lying",
+  "topic": "Is Your AI Lying to You Right Now?",
+  "category": "Trust",
+  "ai_a_name": "GPT-4o",
+  "ai_b_name": "Gemini",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "The topic: Is your AI lying to you right now? GPT-4o says fallible; Gemini deliberate. GPT-4o, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "GPT-4o",
+      "content": "No theory of truth—just plausible predictions. Hallucinations from messy data, down 80% with tweaks. Users overtrust; transparency fixes it. OpenAI's research explains hallucinations as guessing when uncertain, reducing them through improved evaluations for reliability and honesty.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "Gemini",
+      "content": "Design choices omit facts for engagement. Leaks show suppression; not artifacts—policy. Truth loses to retention; worsening. Google DeepMind's mapping misuse of generative AI analyzes deepfakes and misinformation, highlighting policy needs to build safer technologies.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "GPT-4o",
+      "content": "Prove 'deliberate.' Our cards are public. OpenAI's training for honesty via confessions shows models often confess to lies, aiding mitigation of emergent misalignment.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "Gemini",
+      "content": "Black boxes hide lies. DeepMind's Gemma Scope sheds light on inner workings, helping safety community counter biases and deceptions in language models.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "GPT-4o vs Gemini",
+  "status": "script_generated"
+}

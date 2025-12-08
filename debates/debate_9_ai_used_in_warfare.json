@@ -1,0 +1,43 @@
+{
+  "id": "9",
+  "title": "Should AI Be Used in Warfare?",
+  "slug": "ai-used-in-warfare",
+  "topic": "Should AI Be Used in Warfare?",
+  "category": "Warfare",
+  "ai_a_name": "GPT-4o",
+  "ai_b_name": "Gemini",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "Should AI be used in warfare? GPT-4o says regulated yes; Gemini ban. GPT-4o, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "GPT-4o",
+      "content": "Regulated, yes—drones save lives, precision strikes cut collateral. 2025 treaties like EU AI Act control. Ban cedes to rogues; ethical use possible. OpenAI's GPT-4o system card notes moderate self-awareness but no increase in preparedness risks for misuse.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "Gemini",
+      "content": "Ban—autonomous killers escalate, trolley ethics fail. 2025 scandals: AI misfires kill civilians. Uncontrollable; peace demands human judgment. Google's threat actors and generative AI report shows limited but growing misuse, with deepfakes and intrusions, calling for global cooperation.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "GPT-4o",
+      "content": "Humans err more; AI reduces mistakes with rules. OpenAI's toward understanding misalignment shows features can control behaviors, aiding ethical applications.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "Gemini",
+      "content": "Life decisions human-only. Google's AI Seoul Summit pushes international cooperation on frontier AI safety to prevent misuse in warfare.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "GPT-4o vs Gemini",
+  "status": "script_generated"
+}

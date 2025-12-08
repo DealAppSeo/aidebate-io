@@ -1,0 +1,43 @@
+{
+  "id": "6",
+  "title": "Can AI Eliminate Bias or Does It Amplify It?",
+  "slug": "ai-bias-eliminate-or-amplify",
+  "topic": "Can AI Eliminate Bias or Does It Amplify It?",
+  "category": "Ethics",
+  "ai_a_name": "Claude",
+  "ai_b_name": "GPT-4o",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "Can AI eliminate bias or does it amplify it? Claude says amplify; GPT-4o eliminate with fixes. Claude, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "Claude",
+      "content": "It amplifies—trained on skewed data, AI perpetuates racism, sexism in hiring, policing. 2025 studies: facial rec 35% error on dark skin. Fixes like debiasing fail long-term; bias bakes in. Society pays: inequality deepens. Anthropic's evaluating feature steering shows social biases in models, with features related to ideologies requiring mitigation.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "GPT-4o",
+      "content": "Eliminate with tools—diverse datasets, audits cut bias 70% in models like ours. 2025 benchmarks: equitable outputs via RLHF. Amplification overblown; human bias worse. OpenAI's defining political bias in LLMs uses real-world testing to reduce bias, with GPT-5 exhibiting lower than GPT-4o.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "Claude",
+      "content": "Audits temporary; new data reintroduces bias. Anthropic's values in the wild analyzes real conversations, finding biases in AI outputs that need addressing.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "GPT-4o",
+      "content": "Progress beats perfection. OpenAI's evaluating fairness in ChatGPT analyzes responses across names, protecting privacy while reducing bias.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "Claude vs GPT-4o",
+  "status": "script_generated"
+}

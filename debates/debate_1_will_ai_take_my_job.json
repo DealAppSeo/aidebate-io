@@ -1,0 +1,43 @@
+{
+  "id": "1",
+  "title": "Will AI Take My Job Forever?",
+  "slug": "will-ai-take-my-job",
+  "topic": "Will AI Take My Job Forever?",
+  "category": "Economy",
+  "ai_a_name": "Claude",
+  "ai_b_name": "GPT-4o",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "Welcome to this AI debate. Today's topic: Will AI take my job forever? Claude argues yes, GPT-4o no. Claude, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "Claude",
+      "content": "Yes—and quicker than you think. 300 million jobs at risk globally. White-collar hits first: paralegals, analysts, even coders with 30-70% automation. Like past waves, but now degrees don't protect. Skills obsolete in months; pivoting at 45? Rare. AI never tires, costs drop to zero. Real question: Redistribute gains ethically? Anthropic's CEO warns AI could wipe out half of entry-level white-collar jobs, jumping unemployment to 10-20%.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "GPT-4o",
+      "content": "That's the Luddite myth debunked for centuries. Automation creates more roles—ATMs grew branches. For each lost job, 1.4 new ones emerge: prompt engineers, AI auditors. Risk is inequality: Top workers gain 20% wages directing AI. Ride the wave, don't drown. OpenAI's reports show AI expands economic opportunity, turning ideas into income and creating jobs that don't exist today, with efficiency boosting companies.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "Claude",
+      "content": "Net loss when population grows; new jobs favor elites. ATMs needed human trust—AI replaces that entirely. Anthropic data shows productivity doubles but entry-level roles vanish, worsening inequality without intervention.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "GPT-4o",
+      "content": "History favors abundance. Tools build empires. AI helps companies operate efficiently, giving anyone power to innovate. Progress beats fear, with AI paving ways for new careers in uncharted fields.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "Claude vs GPT-4o",
+  "status": "script_generated"
+}

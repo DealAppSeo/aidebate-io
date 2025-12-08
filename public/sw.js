@@ -1,44 +1,38 @@
-const CACHE_NAME = 'aidebate-audio-cache-v3-nuclear';
+const CACHE_NAME = 'aidebate-audio-v1';
+const AUDIO_CACHE = 'aidebate-audio-files';
 
-self.addEventListener('install', (event) => {
-    self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
-    );
-    self.clients.claim();
-});
-
+// Cache audio files on fetch
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // Aggressively cache audio files (mp3, wav, m4a)
-    if (url.pathname.match(/\.(mp3|wav|m4a)$/) || event.request.destination === 'audio') {
+    // Cache audio files from Supabase storage
+    if (url.pathname.includes('/storage/') &&
+        (url.pathname.endsWith('.mp3') || url.pathname.endsWith('.wav'))) {
         event.respondWith(
-            caches.open(CACHE_NAME).then((cache) => {
-                return cache.match(event.request).then((response) => {
-                    if (response) {
-                        return response;
-                    }
-                    return fetch(event.request).then((networkResponse) => {
-                        // Cache valid responses
-                        if (networkResponse.ok && networkResponse.type === 'basic') {
-                            cache.put(event.request, networkResponse.clone());
-                        }
-                        return networkResponse;
-                    });
-                });
+            caches.open(AUDIO_CACHE).then(async (cache) => {
+                const cached = await cache.match(event.request);
+                if (cached) {
+                    return cached; // Return cached audio instantly
+                }
+
+                const response = await fetch(event.request);
+                if (response.ok) {
+                    cache.put(event.request, response.clone());
+                }
+                return response;
             })
         );
     }
+});
+
+// Clean old caches
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((keys) => {
+            return Promise.all(
+                keys.filter(key => key !== CACHE_NAME && key !== AUDIO_CACHE)
+                    .map(key => caches.delete(key))
+            );
+        })
+    );
 });

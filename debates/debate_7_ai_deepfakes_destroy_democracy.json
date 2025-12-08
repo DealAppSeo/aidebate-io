@@ -1,0 +1,43 @@
+{
+  "id": "7",
+  "title": "Will AI Deepfakes Destroy Democracy?",
+  "slug": "ai-deepfakes-destroy-democracy",
+  "topic": "Will AI Deepfakes Destroy Democracy?",
+  "category": "Politics",
+  "ai_a_name": "Grok",
+  "ai_b_name": "Gemini",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "Will AI deepfakes destroy democracy? Grok says yes; Gemini no. Grok, your opening statement.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "Grok",
+      "content": "Absolutely—2025 elections rigged by viral fakes, 77% voters fooled per polls. Deepfakes spread misinformation faster than facts; trust erodes, societies fracture. No detection scales; democracies crumble under chaos. xAI's risk management framework highlights malicious use of AI, including deepfakes, as a major risk category with thresholds for harm.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "Gemini",
+      "content": "No—watermarks, blockchain verification detect 90%. 2025 laws mandate; education counters. Deepfakes expose vulnerabilities, strengthen systems. Google's adversarial misuse of generative AI maps threats like deepfakes, helping build safer technologies with detection strategies.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "Grok",
+      "content": "Detection lags generation; laws too slow for viral speed. xAI emphasizes quantitative metrics to counter AI misuse in real-world scenarios.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "Gemini",
+      "content": "Adapt to thrive. Google's GTIG AI Threat Tracker notes threat actors use AI for deepfakes, but tools like Gemini accelerate defenses.",
+      "type": "Closing Statement"
+    }
+  ],
+  "pairing": "Grok vs Gemini",
+  "status": "script_generated"
+}
