@@ -165,10 +165,15 @@ export default function DebatePlayer({
     const currentRound = rounds[currentRoundIndex];
     if (!currentRound) return <div className="animate-pulse bg-gray-800 h-64 rounded-xl"></div>;
 
-    const activeSpeakerId = currentRound.speaker === ai1Name || currentRound.speaker === 'ai_a' ? 'ai_a' : 'ai_b';
+    // Detect Active Speaker
+    let activeSpeakerId = 'ai_a';
+    if (currentRound.speaker === ai2Name || currentRound.speaker === 'ai_b') activeSpeakerId = 'ai_b';
+    if (currentRound.speaker === 'Aria' || currentRound.type === 'Intro' || currentRound.type === 'Mission') activeSpeakerId = 'aria';
+
     const speakers = [
         { id: 'ai_a', name: ai1Name, color: '#9333ea' },
-        { id: 'ai_b', name: ai2Name, color: '#f59e0b' }
+        { id: 'ai_b', name: ai2Name, color: '#f59e0b' },
+        { id: 'aria', name: 'Aria', color: '#10b981' } // Added Aria
     ];
 
     if (error) {
