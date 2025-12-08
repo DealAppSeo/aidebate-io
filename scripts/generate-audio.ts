@@ -1,8 +1,8 @@
-
 import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
 import * as fs from 'fs'
 import * as path from 'path'
+import { AI_VOICES, getVoiceForModel } from '../lib/voiceConfig'
 
 dotenv.config({ path: '.env.local' })
 
@@ -17,17 +17,8 @@ if (!ELEVENLABS_API_KEY || !SUPABASE_URL || !SUPABASE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
-// Voice Mapping
-const VOICE_MAP: Record<string, string> = {
-    'claude-sonnet': 'ErXwobaYiN019PkySvjV', // Antoni
-    'gpt-4o': 'TxGEqnHWrfWFTfGW9XjX',       // Josh
-    'grok': 'VR6AewLTigWG4xSOukaG',         // Arnold
-    'gemini': 'pNInz6obpgDQGcFmaJgB',       // Adam
-    'llama': 'yoZ06aMxZJJ28mfd3POQ',        // Sam
-    'deepseek': 'onwK4e9ZLuTAKqWW03F9'      // Daniel
-}
-
-const ARIA_VOICE_ID = 'MF3mGyEYCl7XYWbV9V6O' // Elli (Aria)
+// ARIA Voice (Bella)
+const ARIA_VOICE_ID = AI_VOICES.aria.voiceId
 
 // --- ARIA SCRIPTS ---
 
@@ -151,9 +142,10 @@ async function processDebate(debate: any) {
     for (const round of debate.rounds) {
         // AI A
         if (round.ai_a_text && !round.ai_a_audio_url) {
-            console.log(`    Round ${round.round} AI A...`)
+            console.log(`    Round ${round.round} AI A (${debate.ai_a_name})...`)
             try {
-                const voice = VOICE_MAP[debate.ai_a_id] || 'ErXwobaYiN019PkySvjV'
+                // Use new central config logic
+                const voice = getVoiceForModel(debate.ai_a_name)
                 const audio = await generateSpeech(round.ai_a_text, voice)
                 const url = await uploadAudio(audio, `${debate.id}_${round.round}_a.mp3`)
                 round.ai_a_audio_url = url
@@ -162,9 +154,9 @@ async function processDebate(debate: any) {
         }
         // AI B
         if (round.ai_b_text && !round.ai_b_audio_url) {
-            console.log(`    Round ${round.round} AI B...`)
+            console.log(`    Round ${round.round} AI B (${debate.ai_b_name})...`)
             try {
-                const voice = VOICE_MAP[debate.ai_b_id] || 'ErXwobaYiN019PkySvjV'
+                const voice = getVoiceForModel(debate.ai_b_name)
                 const audio = await generateSpeech(round.ai_b_text, voice)
                 const url = await uploadAudio(audio, `${debate.id}_${round.round}_b.mp3`)
                 round.ai_b_audio_url = url
@@ -269,10 +261,8 @@ async function main() {
 async function generateAriaWelcome() {
     console.log('Generating Aria Welcome...')
     const script = "Welcome to AI Debate... where the world's smartest AIs go head to head, and YOU decide who wins."
-    const ARIA_VOICE_ID = 'EXAVITQu4vr4xnSDxMaL' // Bella - Note: The file had MF3m... for Aria, checking consistency.
-    // The file has const ARIA_VOICE_ID = 'MF3mGyEYCl7XYWbV9V6O' at line 28.
-    // The user requested 'EXAVITQu4vr4xnSDxMaL' (Bella) for the Welcome.
-    // I'll use the requested ID for the welcome.
+    // ARIA_VOICE_ID is already defined globally from config
+
 
     const AUDIO_DIR = path.join(process.cwd(), 'public', 'audio')
     if (!fs.existsSync(AUDIO_DIR)) {
