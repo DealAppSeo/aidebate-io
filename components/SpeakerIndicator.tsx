@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 
 interface SpeakerIndicatorProps {
     speakers: { id: string; name: string; avatar?: string; color: string }[];
@@ -11,54 +11,43 @@ export const SpeakerIndicator = ({ speakers, activeSpeaker, isPlaying }: Speaker
         <div className="flex justify-center gap-8 py-4">
             {speakers.map((speaker) => {
                 const isActive = speaker.id === activeSpeaker;
+                // Use CSS classes + inline styles for performance instead of JS animation
                 return (
-                    <motion.div
+                    <div
                         key={speaker.id}
-                        animate={isActive && isPlaying ? {
-                            scale: [1, 1.05, 1],
-                        } : { scale: 1 }}
-                        transition={{ repeat: Infinity, duration: 1.5 }}
-                        className={`flex flex-col items-center transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-40'
-                            }`}
+                        className={`flex flex-col items-center transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-40'}`}
                     >
-                        <motion.div
-                            className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold relative overflow-visible`}
+                        <div
+                            className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold relative overflow-visible transition-transform duration-500 ${isActive && isPlaying ? 'scale-105' : 'scale-100'}`}
                             style={{
                                 backgroundColor: speaker.color,
+                                boxShadow: isActive && isPlaying ? `0 0 20px ${speaker.color}60` : 'none',
+                                transition: 'box-shadow 0.3s ease, transform 0.3s ease'
                             }}
-                            animate={isActive && isPlaying ? {
-                                boxShadow: [
-                                    `0 0 0 0 ${speaker.color}40`,
-                                    `0 0 20px 10px ${speaker.color}60`,
-                                    `0 0 0 0 ${speaker.color}40`
-                                ]
-                            } : { boxShadow: 'none' }}
-                            transition={{ repeat: Infinity, duration: 1.5 }}
                         >
                             {speaker.name[0]}
                             {isActive && isPlaying && (
                                 <div className="absolute -bottom-1 left-0 right-0 flex justify-center gap-0.5 h-4 translate-y-full">
-                                    {[...Array(5)].map((_, i) => (
-                                        <motion.div
-                                            key={i}
-                                            animate={{ scaleY: [0.3, 1, 0.3] }}
-                                            transition={{
-                                                repeat: Infinity,
-                                                duration: 0.5,
-                                                delay: i * 0.1
-                                            }}
-                                            className="w-1 bg-white/80 rounded-full origin-bottom"
-                                            style={{ height: '100%' }}
-                                        />
-                                    ))}
+                                    <span className="w-1 bg-white/80 rounded-full animate-[equalizer_1s_ease-in-out_infinite]" style={{ height: '100%', animationDelay: '0s' }} />
+                                    <span className="w-1 bg-white/80 rounded-full animate-[equalizer_1s_ease-in-out_infinite]" style={{ height: '80%', animationDelay: '0.1s' }} />
+                                    <span className="w-1 bg-white/80 rounded-full animate-[equalizer_1s_ease-in-out_infinite]" style={{ height: '60%', animationDelay: '0.2s' }} />
+                                    <span className="w-1 bg-white/80 rounded-full animate-[equalizer_1s_ease-in-out_infinite]" style={{ height: '80%', animationDelay: '0.3s' }} />
+                                    <span className="w-1 bg-white/80 rounded-full animate-[equalizer_1s_ease-in-out_infinite]" style={{ height: '100%', animationDelay: '0.4s' }} />
                                 </div>
                             )}
-                        </motion.div>
+                        </div>
 
                         <span className={`mt-6 text-sm font-medium ${isActive ? 'text-white' : 'text-gray-500'}`}>
                             {speaker.name}
                         </span>
-                    </motion.div>
+
+                        <style jsx>{`
+                            @keyframes equalizer {
+                                0%, 100% { transform: scaleY(0.3); }
+                                50% { transform: scaleY(1); }
+                            }
+                        `}</style>
+                    </div>
                 );
             })}
         </div>

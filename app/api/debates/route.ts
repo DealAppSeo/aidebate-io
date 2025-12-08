@@ -29,7 +29,7 @@ export async function GET(request: Request) {
         const { data, error } = await supabase
             .from('debates')
             .select('*')
-            .eq('status', 'active')
+            .in('status', ['active', 'live'])
             .order('created_at', { ascending: false })
 
         if (error) {

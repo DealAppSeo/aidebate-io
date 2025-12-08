@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
-import Confetti from 'react-confetti';
+import dynamic from 'next/dynamic';
+const Confetti = dynamic(() => import('react-confetti'), { ssr: false });
 import { useState, useEffect } from 'react';
 import { VoteBadge } from '../VoteBadge';
 import { ShareButtons } from '../ShareButtons';
 import { SmartRecommendations } from '../SmartRecommendations';
 import { EmailCapture } from '@/components/EmailCapture';
+import { EthicsImpactMeter } from './EthicsImpactMeter';
 import { missionCTAs } from '@/lib/constants';
 
 interface ResultsScreenProps {
@@ -141,6 +143,10 @@ export const ResultsScreen = ({
 
             {/* Up Next */}
             <SmartRecommendations />
+
+            <div className="pt-8">
+                <EthicsImpactMeter />
+            </div>
 
             {/* Mission CTA */}
             <div className='text-center space-y-4 pt-8 border-t border-gray-800'>

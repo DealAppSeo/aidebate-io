@@ -8,10 +8,12 @@ import { VoteScreen } from '@/components/debates/VoteScreen'
 import { ResultsScreen } from '@/components/debates/ResultsScreen'
 import MissionScreen from '@/components/debates/MissionScreen'
 import { PredictionScreen } from '@/components/PredictionScreen'
-import PredictionModal from '@/components/modals/PredictionModal'
-import FeedbackModal from '@/components/modals/FeedbackModal'
-import HallucinationModal from '@/components/modals/HallucinationModal'
-import { ShareModal } from '@/components/modals/ShareModal'
+import dynamic from 'next/dynamic'
+
+const PredictionModal = dynamic(() => import('@/components/modals/PredictionModal'), { ssr: false })
+const FeedbackModal = dynamic(() => import('@/components/modals/FeedbackModal'), { ssr: false })
+const HallucinationModal = dynamic(() => import('@/components/modals/HallucinationModal'), { ssr: false })
+const ShareModal = dynamic(() => import('@/components/modals/ShareModal'), { ssr: false })
 import { useSession } from '@/hooks/useSession'
 import { RepIDBreakdown } from '@/lib/repid'
 
@@ -58,6 +60,26 @@ export default function DebatePage() {
         }
     }
 
+    // PRIORITY 1: AUDIO PRELOADING
+    useEffect(() => {
+        if (!debate?.rounds) return;
+
+        // Preload ALL round audio immediately on debate load
+        debate.rounds.forEach((round: any) => {
+            const urls = [round.ai_a_audio_url, round.ai_b_audio_url, round.audio_url].filter(Boolean);
+            urls.forEach((url: string) => {
+                if (url) {
+                    const audio = new Audio(url);
+                    audio.preload = 'auto';
+                    // iOS workaround: silent play to force buffer
+                    audio.volume = 0;
+                    audio.play().catch(() => { });
+                    setTimeout(() => { audio.pause(); audio.volume = 1; }, 100);
+                }
+            });
+        });
+    }, [debate]);
+
     function handlePrediction(speakerId: string) {
         setPrediction(speakerId as any)
         setViewMode('player')
@@ -74,7 +96,16 @@ export default function DebatePage() {
     }
 
     async function handleVote(selectedVote: string) {
-        if (!session || hasVoted || isSubmitting) return
+        if (hasVoted || isSubmitting) return
+
+        if (!session) {
+            console.error('Session missing, attempting to recover...')
+            // Try to force update session or just alert user if it persists
+            // For now, let's just alert so they know why
+            alert("We're having trouble verifying your session. Please refresh the page.")
+            return
+        }
+
         setIsSubmitting(true)
         setVote(selectedVote as any)
 

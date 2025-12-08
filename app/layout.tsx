@@ -6,8 +6,8 @@ import { Inter, JetBrains_Mono } from 'next/font/google'
 import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister'
 import Footer from '@/components/layout/Footer'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
-const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' })
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap' })
 
 export const metadata: Metadata = {
   title: 'AIDebate.io - Where humanity decides which AI to trust',

@@ -1,37 +1,44 @@
-self.addEventListener('push', function (event) {
-    let data = { title: 'New Notification', body: '', url: '/' };
+const CACHE_NAME = 'aidebate-audio-cache-v3-nuclear';
 
-    if (event.data) {
-        try {
-            const json = event.data.json()
-            data = { ...data, ...json }
-        } catch (e) {
-            data.body = event.data.text()
-        }
-    }
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
+});
 
-    const options = {
-        body: data.body,
-        icon: '/icon-192.png',
-        badge: '/badge-72.png',
-        data: { url: data.url },
-        actions: [
-            { action: 'open', title: 'View' },
-            { action: 'dismiss', title: 'Dismiss' }
-        ]
-    }
-
+self.addEventListener('activate', (event) => {
     event.waitUntil(
-        self.registration.showNotification(data.title, options)
-    )
-})
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+    self.clients.claim();
+});
 
-self.addEventListener('notificationclick', function (event) {
-    event.notification.close()
+self.addEventListener('fetch', (event) => {
+    const url = new URL(event.request.url);
 
-    if (event.action === 'open' || !event.action) {
-        event.waitUntil(
-            clients.openWindow(event.notification.data.url || '/')
-        )
+    // Aggressively cache audio files (mp3, wav, m4a)
+    if (url.pathname.match(/\.(mp3|wav|m4a)$/) || event.request.destination === 'audio') {
+        event.respondWith(
+            caches.open(CACHE_NAME).then((cache) => {
+                return cache.match(event.request).then((response) => {
+                    if (response) {
+                        return response;
+                    }
+                    return fetch(event.request).then((networkResponse) => {
+                        // Cache valid responses
+                        if (networkResponse.ok && networkResponse.type === 'basic') {
+                            cache.put(event.request, networkResponse.clone());
+                        }
+                        return networkResponse;
+                    });
+                });
+            })
+        );
     }
-})
+});

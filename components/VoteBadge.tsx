@@ -28,7 +28,12 @@ export const VoteBadge = ({ repId, streak, totalVotes, type = 'standard', predic
         if (!badgeRef.current) return;
         setDownloading(true);
         try {
-            const canvas = await html2canvas(badgeRef.current, { backgroundColor: null, scale: 2 });
+            const canvas = await html2canvas(badgeRef.current, {
+                backgroundColor: null,
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+            });
             const link = document.createElement('a');
             link.download = `aidebate-${type}-badge.png`;
             link.href = canvas.toDataURL();

@@ -26,7 +26,10 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "framer-motion": "^12.23.25",
+    "hls.js": "^1.6.15",
+    "howler": "^2.2.4",
     "html2canvas": "^1.4.1",
+    "idb-keyval": "^6.2.2",
     "jose": "^6.1.3",
     "lru-cache": "^11.2.4",
     "lucide-react": "^0.555.0",
@@ -42,7 +45,8 @@
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
     "tone": "^15.1.22",
-    "web-push": "^3.6.7"
+    "web-push": "^3.6.7",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

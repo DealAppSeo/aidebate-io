@@ -26,7 +26,10 @@ export const VoteScreen = ({ speakers, prediction, onVote, onSkip, isSubmitting 
                 {speakers.map((speaker) => (
                     <button
                         key={speaker.id}
-                        onClick={() => onVote(speaker.id)}
+                        onClick={() => {
+                            if (window.navigator?.vibrate) window.navigator.vibrate(50); // Haptic feedback
+                            onVote(speaker.id);
+                        }}
                         disabled={isSubmitting}
                         className="group flex flex-col items-center space-y-4 p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-blue-500 hover:bg-gray-750 transition-all flex-1"
                     >
