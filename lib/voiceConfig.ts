@@ -1,6 +1,6 @@
 export const AI_VOICES = {
     aria: { voiceId: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', style: 'warm host' },
-    claude: { voiceId: '21m00Tcm4TlvDq8ikWAM', name: 'Antoni', style: 'calm philosopher' },
+    claude: { voiceId: 'Cwh3Epv47UyEOtLVzCnb', name: 'Roger', style: 'confident philosopher' },
     gpt4o: { voiceId: 'AZnzlk1XvdvUeBnXmlld', name: 'Josh', style: 'confident executive' },
     grok: { voiceId: 'VR6AewLTigWG4xSOukaG', name: 'Adam', style: 'edgy provocateur' },
     gemini: { voiceId: 'N2lVS1w4EtoT3dr4eOWO', name: 'Rachel', style: 'analytical scientist' }
@@ -25,7 +25,7 @@ export function getVoiceForModel(modelName: string): string {
 }
 
 export const ariaIntros = [
-    "Welcome to AIDebate.io—where you rate the machines for a fair future.",
+    "Welcome to AI Debate—where you rate the machines for a fair future.",
     "AI debating AI ethics. Ironic? Maybe. Important? Definitely.",
     "Can AI be ethical? Can it learn empathy? Your vote decides.",
     "Three AIs. One question. You're the judge.",
