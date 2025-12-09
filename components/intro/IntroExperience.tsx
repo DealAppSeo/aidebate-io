@@ -6,15 +6,20 @@ import * as Tone from 'tone'
 interface IntroExperienceProps {
     onComplete: () => void
     skipEnabled?: boolean
+    debate?: any // Optional debate object to preload
 }
 
-export default function IntroExperience({ onComplete, skipEnabled = true }: IntroExperienceProps) {
+export default function IntroExperience({ onComplete, skipEnabled = true, debate }: IntroExperienceProps) {
     const [phase, setPhase] = useState<'black' | 'sonic' | 'heartbeat' | 'aria' | 'done'>('black')
     const [canSkip, setCanSkip] = useState(false)
+    const [loadProgress, setLoadProgress] = useState(0)
+    const [audioReady, setAudioReady] = useState(false)
+
     const audioContextStarted = useRef(false)
     const heartbeatRef = useRef<Tone.Loop | null>(null)
     const waveformRef = useRef<HTMLCanvasElement>(null)
     const analyserRef = useRef<Tone.Analyser | null>(null)
+
 
     // Check if first visit
     useEffect(() => {
@@ -33,6 +38,45 @@ export default function IntroExperience({ onComplete, skipEnabled = true }: Intr
             Tone.getTransport().stop()
         }
     }, [])
+
+    // Preload Logic
+    useEffect(() => {
+        if (!debate?.rounds) return;
+
+        const preloadDebateAudio = async () => {
+            const rounds = debate.rounds;
+            const audioUrls = rounds.flatMap((r: any) =>
+                [r.audio_url, r.ai_a_audio_url, r.ai_b_audio_url].filter(Boolean)
+            );
+
+            let loaded = 0;
+
+            await Promise.all(audioUrls.map(async (url: string) => {
+                try {
+                    // Fetch to trigger service worker cache
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+
+                    // Store in global cache for immediate access (optional, since SW handles it)
+                    // But creates object URL for blob-based instant playback
+                    const objectUrl = URL.createObjectURL(blob);
+                    // @ts-ignore
+                    window.__audioCache = window.__audioCache || {};
+                    // @ts-ignore
+                    window.__audioCache[url] = objectUrl;
+
+                    loaded++;
+                    setLoadProgress((loaded / audioUrls.length) * 100);
+                } catch (e) {
+                    console.warn('Failed to preload:', url);
+                }
+            }));
+
+            setAudioReady(true);
+        };
+
+        preloadDebateAudio();
+    }, [debate]);
 
     async function startIntro() {
         // Phase 1: Black screen (1 second)
@@ -301,19 +345,35 @@ export default function IntroExperience({ onComplete, skipEnabled = true }: Intr
                     )
                 }
 
-                {/* Skip button */}
-                {
-                    canSkip && skipEnabled && phase !== 'done' && (
+                {/* Skip button & Progress */}
+                <div className="absolute bottom-8 right-8 z-50 flex flex-col items-end gap-2">
+                    {/* Preload Indicator */}
+                    {debate && (
+                        <div className="flex flex-col items-end gap-1">
+                            <div className="w-32 h-1 bg-gray-800 rounded-full overflow-hidden">
+                                <motion.div
+                                    className="h-full bg-blue-500"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${loadProgress}%` }}
+                                />
+                            </div>
+                            <p className="text-[10px] text-gray-500 uppercase tracking-widest">
+                                {audioReady ? 'Ready for Debate' : 'Preloading Audio...'}
+                            </p>
+                        </div>
+                    )}
+
+                    {canSkip && skipEnabled && phase !== 'done' && (
                         <motion.button
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             onClick={(e) => { e.stopPropagation(); handleSkip() }}
-                            className="absolute bottom-8 right-8 text-gray-500 hover:text-white text-sm transition z-50 uppercase tracking-widest"
+                            className="text-gray-500 hover:text-white text-sm transition uppercase tracking-widest"
                         >
                             Skip →
                         </motion.button>
-                    )
-                }
+                    )}
+                </div>
             </motion.div >
         </AnimatePresence >
     )

@@ -12,6 +12,10 @@ import { ClipButton } from '@/components/ClipButton';
 import { useListenerCount } from '@/hooks/useListenerCount';
 import { playUISound } from '@/lib/sounds';
 import { getRandomFiller } from '@/lib/fillerPhrases';
+import { ARIA_BUFFER_MESSAGES, getRandomAriaMessage } from '@/lib/ariaFallbacks';
+import { useNetworkQuality } from '@/lib/network';
+import { useBatteryStatus } from '@/lib/battery';
+import { logger } from '@/lib/logger';
 
 interface DebatePlayerProps {
     debateId: string;
@@ -49,6 +53,15 @@ export default function DebatePlayer({
     const [audioReady, setAudioReady] = useState(false);
     const [soundEnabled, setSoundEnabled] = useState(true);
     const listenerCount = useListenerCount(debateId);
+
+    // Performance & UX State
+    const [isBuffering, setIsBuffering] = useState(false);
+    const [bufferMessage, setBufferMessage] = useState('');
+    const networkQuality = useNetworkQuality();
+    const isLowBattery = useBatteryStatus();
+    const bufferTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+
+    const performanceMode = isLowBattery || networkQuality === 'slow' ? 'lite' : 'full';
 
     // Refs
     const roundsRef = useRef(rounds);
@@ -111,10 +124,28 @@ export default function DebatePlayer({
         // Between speakers logic is implicitly handled by rounds changing.
     }, [currentRoundIndex, rounds]);
 
+    // Audio Event Listeners for Buffering
+    useEffect(() => {
+        const checkBuffering = () => {
+            // We can monitor progress vs playback position manually since we use Howl/GlobalAudio in engine
+            // But audioEngine wraps Howler. We might need to expose loading state from store or engine.
+            // For now, let's rely on immediate feedback from engine.
+        }
+    }, [isPlaying]);
+
     // Playback Logic
     useEffect(() => {
         const round = rounds[currentRoundIndex];
-        const url = round?.audio_url || round?.ai_a_audio_url || round?.ai_b_audio_url;
+        // Check global cache first
+        let url = round?.audio_url || round?.ai_a_audio_url || round?.ai_b_audio_url;
+
+        // @ts-ignore
+        if (typeof window !== 'undefined' && window.__audioCache && window.__audioCache[url]) {
+            // @ts-ignore
+            url = window.__audioCache[url];
+            logger.log("Using cached audio:", url);
+        }
+
         const isNewRound = currentRoundIndex !== lastRoundIndexRef.current;
         lastRoundIndexRef.current = currentRoundIndex;
         const shouldPlay = isPlaying;
@@ -122,9 +153,22 @@ export default function DebatePlayer({
         if (url) {
             if (isNewRound) {
                 setAudioReady(false);
+                setBufferMessage(getRandomAriaMessage());
+
+                // Show buffer msg if loading takes > 1s
+                bufferTimeout.current = setTimeout(() => setIsBuffering(true), 1000);
+
                 audioEngine.load(url, round.id || round.order, shouldPlay)
-                    .then(() => setAudioReady(true))
-                    .catch(() => handleAudioError());
+                    .then(() => {
+                        setAudioReady(true);
+                        setIsBuffering(false);
+                        clearTimeout(bufferTimeout.current);
+                    })
+                    .catch((e) => {
+                        clearTimeout(bufferTimeout.current);
+                        setIsBuffering(false);
+                        handleAudioError();
+                    });
             } else if (shouldPlay !== lastPlayingRef.current) {
                 if (shouldPlay) audioEngine.play();
                 else audioEngine.pause();
@@ -142,7 +186,7 @@ export default function DebatePlayer({
         // And provided implementation:
         const fillerUrl = `https://ajpxpmkgkcaomqblkkme.supabase.co/storage/v1/object/public/debate-audio/fillers/filler_${fillerIndex}.mp3`;
 
-        console.log("Audio failed. Playing filler:", fillerUrl);
+        logger.log("Audio failed. Playing filler:", fillerUrl);
         // Play filler then retry? Or just fail gracefully?
         // User code: playFiller(fillerUrl).then(() => retryMainAudio());
         // Simplified: load filler, play it, then show error or retry.
@@ -259,10 +303,20 @@ export default function DebatePlayer({
                         </div>
                     </motion.div>
                 </AnimatePresence>
+
+                {/* Buffering Overlay */}
+                {isBuffering && (
+                    <div className="absolute inset-x-0 top-32 z-20 flex justify-center pointer-events-none">
+                        <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-full border border-white/10 flex items-center gap-3">
+                            <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                            <span className="text-white text-sm font-medium">{bufferMessage}</span>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Sticky Bottom Controls (Mobile) / Regular (Desktop) */}
-            <div className="fixed bottom-0 left-0 right-0 sm:relative sm:bottom-auto bg-[#0a0a0a]/95 sm:bg-transparent backdrop-blur-lg sm:backdrop-blur-none border-t border-white/10 sm:border-t-0 p-4 pb-8 sm:p-0 z-50 bottom-controls">
+            <div className="fixed bottom-0 left-0 right-0 sm:relative sm:bottom-auto bg-[#0a0a0a]/95 sm:bg-transparent backdrop-blur-lg sm:backdrop-blur-none border-t border-white/10 sm:border-t-0 p-4 pb-[max(2rem,env(safe-area-inset-bottom))] sm:p-0 z-50 bottom-controls">
                 <div className="w-full max-w-2xl mx-auto space-y-4">
 
                     {/* Progress & Speed */}
