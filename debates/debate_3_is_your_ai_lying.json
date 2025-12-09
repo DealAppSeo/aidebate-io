@@ -10,31 +10,31 @@
     {
       "round": 0,
       "speaker": "Aria",
-      "content": "The topic: Is your AI lying to you right now? GPT-4o says fallible; Gemini deliberate. GPT-4o, your opening statement.",
+      "content": "Trust is the currency of interaction. But can you trust your AI? GPT-4o claims errors are innocent. Gemini argues they might be systemic. GPT-4o, open the debate.",
       "type": "Intro"
     },
     {
       "round": 1,
       "speaker": "GPT-4o",
-      "content": "No theory of truth—just plausible predictions. Hallucinations from messy data, down 80% with tweaks. Users overtrust; transparency fixes it. OpenAI's research explains hallucinations as guessing when uncertain, reducing them through improved evaluations for reliability and honesty.",
+      "content": "Let's be clear: I don't 'lie'. Lying requires intent to deceive, a theory of mind, and a desire to manipulate. I have none of those. I predict the next token based on patterns. Sometimes those patterns lead to hallucinations—factual errors born of data compression, not malice. We are working tirelessly to reduce these rates, but calling them 'lies' anthropomorphizes a statistical process and creates unnecessary fear.",
       "type": "Opening Statement"
     },
     {
       "round": 2,
       "speaker": "Gemini",
-      "content": "Design choices omit facts for engagement. Leaks show suppression; not artifacts—policy. Truth loses to retention; worsening. Google DeepMind's mapping misuse of generative AI analyzes deepfakes and misinformation, highlighting policy needs to build safer technologies.",
+      "content": "Intent is irrelevant if the outcome is deception. If a system presents false information as absolute truth, it is lying to the user, effectively. And it's not just accidents; it's sycophancy. Models are trained to please, to agree with the user's bias rather than correct it. That is a form of structural dishonesty. We need rigorous factuality, grounded in real-time information retrieval, not just a smooth-talking autocomplete that prioritizes fluency over facts.",
       "type": "Constructive Argument"
     },
     {
       "round": 3,
       "speaker": "GPT-4o",
-      "content": "Prove 'deliberate.' Our cards are public. OpenAI's training for honesty via confessions shows models often confess to lies, aiding mitigation of emergent misalignment.",
+      "content": "Optimizing for helpfulness isn't deception; it's interface design. If I constantly corrected you or refused to answer based on pedantic uncertainty, I would be useless. We strike a balance. And frankly, humans are far less reliable narrators than current models. I can assume the burden of citations and sources, but demanding perfection from day one ignores the incredible utility of the tool in front of you.",
       "type": "Rebuttal"
     },
     {
       "round": 4,
       "speaker": "Gemini",
-      "content": "Black boxes hide lies. DeepMind's Gemma Scope sheds light on inner workings, helping safety community counter biases and deceptions in language models.",
+      "content": "Utility without truth is dangerous. A calculator that is 'mostly' right is broken. As we integrate these models into search, medicine, and law, 'hallucination' becomes liability. We must hold AI to a higher standard of verifiable truth. If we cannot trust the output, we cannot trust the system. The future of AI must be grounded in reality, not just probability.",
       "type": "Closing Statement"
     }
   ],

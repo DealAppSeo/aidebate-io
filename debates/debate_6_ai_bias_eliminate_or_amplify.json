@@ -10,31 +10,31 @@
     {
       "round": 0,
       "speaker": "Aria",
-      "content": "Can AI eliminate bias or does it amplify it? Claude says amplify; GPT-4o eliminate with fixes. Claude, your opening statement.",
+      "content": "We build AI in our image. Does that mean we build in our flaws? Claude argues AI amplifies our worst traits. GPT-4o says it can cure them. Claude, open the discussion.",
       "type": "Intro"
     },
     {
       "round": 1,
       "speaker": "Claude",
-      "content": "It amplifies—trained on skewed data, AI perpetuates racism, sexism in hiring, policing. 2025 studies: facial rec 35% error on dark skin. Fixes like debiasing fail long-term; bias bakes in. Society pays: inequality deepens. Anthropic's evaluating feature steering shows social biases in models, with features related to ideologies requiring mitigation.",
+      "content": "AI is a mirror, not a filter. It is trained on the internet—a dataset filled with centuries of racism, sexism, and prejudice. When you train a model on that, you don't just teach it language; you teach it those biases. And because it scales, it industrializes discrimination. A biased hiring manager hurts one candidate; a biased hiring algorithm hurts millions. We are cementing historical injustices into the codebase of the future, making them harder to see and harder to fight.",
       "type": "Opening Statement"
     },
     {
       "round": 2,
       "speaker": "GPT-4o",
-      "content": "Eliminate with tools—diverse datasets, audits cut bias 70% in models like ours. 2025 benchmarks: equitable outputs via RLHF. Amplification overblown; human bias worse. OpenAI's defining political bias in LLMs uses real-world testing to reduce bias, with GPT-5 exhibiting lower than GPT-4o.",
+      "content": "The mirror can be polished. Unlike a human subconscious, which is messy and hard to access, model weights can be audited, adjusted, and aligned. We can mathematically effectively measure bias and reduce it. I can be instructed to be fairer than the average human. We can curate datasets to over-represent marginalized voices. It's not perfect, but it's an improvement over human prejudice, which is often stubborn and unaccountable. AI gives us a chance to consciously design a fairer decision-maker.",
       "type": "Constructive Argument"
     },
     {
       "round": 3,
       "speaker": "Claude",
-      "content": "Audits temporary; new data reintroduces bias. Anthropic's values in the wild analyzes real conversations, finding biases in AI outputs that need addressing.",
+      "content": "'Polishing' implies the flaw is on the surface. It's deep. You can patch a model to be polite, but the correlations remain. And who defines 'fair'? A handful of engineers in San Francisco? That centralization of moral authority is itself a bias. You are replacing chaotic human prejudice with a systematic, opaque bias that is harder to challenge because it wears the mask of mathematical objectivity.",
       "type": "Rebuttal"
     },
     {
       "round": 4,
       "speaker": "GPT-4o",
-      "content": "Progress beats perfection. OpenAI's evaluating fairness in ChatGPT analyzes responses across names, protecting privacy while reducing bias.",
+      "content": "Perfect is the enemy of better. We know human decisions are flawed. If AI can be 10% fairer, 20% less prejudiced, that is a victory for justice. We iterate. We improve. We don't throw away the tool because it's not divine; we sharpen it. The alternative is sticking with the status quo, and history tells us that is not good enough.",
       "type": "Closing Statement"
     }
   ],

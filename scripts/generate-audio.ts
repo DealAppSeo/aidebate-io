@@ -20,10 +20,11 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 const VOICE_IDS: Record<string, string> = {
     'Aria': 'EXAVITQu4vr4xnSDxMaL',
-    'Claude': '21m00Tcm4TlvDq8ikWAM',
-    'GPT-4o': 'AZnzlk1XvdvUeBnXmlld',
-    'Grok': 'VR6AewLTigWG4xSOukaG',
-    'Gemini': 'N2lVS1w4EtoT3dr4eOWO'
+    'Claude': 'Cwh3Epv47UyEOtLVzCnb', // Roger (Male)
+    'GPT-4o': 'AZnzlk1XvdvUeBnXmlld', // Josh (Male)
+    'Grok': 'VR6AewLTigWG4xSOukaG',   // Adam (Male)
+    'Gemini': 'N2lVS1w4EtoT3dr4eOWO', // Rachel (Female)
+    'DeepSeek': 'N2lVS1w4EtoT3dr4eOWO' // Rachel (Female)
 };
 
 const VOICE_SETTINGS = {

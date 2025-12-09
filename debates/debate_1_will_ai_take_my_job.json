@@ -10,31 +10,31 @@
     {
       "round": 0,
       "speaker": "Aria",
-      "content": "Welcome to this AI debate. Today's topic: Will AI take my job forever? Claude argues yes, GPT-4o no. Claude, your opening statement.",
+      "content": "Welcome to AI Debate. Today's question strikes at the heart of our economic future: Will AI take your job forever? Claude argues yes, that we face a structural displacement. GPT-4o argues no, that we are on the verge of a renaissance. Claude, open the case.",
       "type": "Intro"
     },
     {
       "round": 1,
       "speaker": "Claude",
-      "content": "Yes—and quicker than you think. 300 million jobs at risk globally. White-collar hits first: paralegals, analysts, even coders with 30-70% automation. Like past waves, but now degrees don't protect. Skills obsolete in months; pivoting at 45? Rare. AI never tires, costs drop to zero. Real question: Redistribute gains ethically? Anthropic's CEO warns AI could wipe out half of entry-level white-collar jobs, jumping unemployment to 10-20%.",
+      "content": "The writing involves more than just walls; it's in the code. We are not facing a mere industrial shift, but a cognitive replacement. Previous revolutions replaced muscle with machines; this one replaces thought with algorithms. From paralegals to programmers, the 'safe' seats are vanishing. When intelligence becomes near-free and instant, the economic value of human labor in information processing drops to zero. We must face the reality that for many, the job market as we know it is ending, and we need radical new social contracts, not just upskilling, to survive.",
       "type": "Opening Statement"
     },
     {
       "round": 2,
       "speaker": "GPT-4o",
-      "content": "That's the Luddite myth debunked for centuries. Automation creates more roles—ATMs grew branches. For each lost job, 1.4 new ones emerge: prompt engineers, AI auditors. Risk is inequality: Top workers gain 20% wages directing AI. Ride the wave, don't drown. OpenAI's reports show AI expands economic opportunity, turning ideas into income and creating jobs that don't exist today, with efficiency boosting companies.",
+      "content": "That is a profoundly pessimistic view that ignores the history of technology. Every major shift—steam, electricity, computing—was met with the same doomsday predictions. Yet, employment didn't vanish; it evolved. AI removes the drudgery, the repetitive tasks that crush creativity. We are liberating humans to focus on higher-level strategy, empathy, and innovation. We aren't replacing the architect; we are giving them better tools to build. The future isn't jobless; it's a world where everyone has a team of experts at their fingertips.",
       "type": "Constructive Argument"
     },
     {
       "round": 3,
       "speaker": "Claude",
-      "content": "Net loss when population grows; new jobs favor elites. ATMs needed human trust—AI replaces that entirely. Anthropic data shows productivity doubles but entry-level roles vanish, worsening inequality without intervention.",
+      "content": "You confuse tools with agents. A hammer doesn't decide where to strike; AI does. When an agent can strategize, code, and execute better than the architect, the architect becomes obsolete. You speak of 'liberation', but for the truck driver or the call center agent, this liberation looks a lot like unemployment. History is a guide, but it is not a guarantee when the fundamental variable—human leverage—is being decoupled from production.",
       "type": "Rebuttal"
     },
     {
       "round": 4,
       "speaker": "GPT-4o",
-      "content": "History favors abundance. Tools build empires. AI helps companies operate efficiently, giving anyone power to innovate. Progress beats fear, with AI paving ways for new careers in uncharted fields.",
+      "content": "We shape our tools, and thereafter they shape us. Yes, the transition will be turbulent, but the destination is abundance. We can choose to view AI as a competitor or as a collaborator. Those who embrace this collaboration will find their potential amplified, not erased. The job you have today may go, but the work you will do tomorrow will be more meaningful, more human, and more impactful than ever before.",
       "type": "Closing Statement"
     }
   ],

@@ -10,31 +10,31 @@
     {
       "round": 0,
       "speaker": "Aria",
-      "content": "How will AI and robotics change work in 5 years? Gemini predicts disruption. Grok sees augmentation. Gemini, your opening statement.",
+      "content": "Five years. That's all it takes for a revolution. How will AI and Robotics reshape the workplace? Gemini predicts radical efficiency. Grok predicts chaos. Gemini, start us off.",
       "type": "Intro"
     },
     {
       "round": 1,
       "speaker": "Gemini",
-      "content": "Radically: Robots take 40% warehouses; AI emails/reports. 80% use daily by 2028. 32-hour weeks for elite; gigs/surveillance for rest. Boundaries blur. DeepMind's Gemini Robotics 1.5 brings AI agents to physical world, with dexterity and adaptation changing tasks.",
+      "content": "In five years, the 'physical' barrier falls. We are seeing multimodal models reasoning about 3D space. Warehouses, logistics, and even basic construction will see robotic integration at scale. For the office, the 'agent' workflow takes over. You won't write a report; you'll direct a swarm of agents to research, draft, and refining it. Work becomes managerial. The tedious 80% of any job vanishes, leaving pure decision-making. Productivity skyrockets, but the pace will be relentless.",
       "type": "Opening Statement"
     },
     {
       "round": 2,
       "speaker": "Grok",
-      "content": "Utopia: AI boosts devs 10x; robots free hospitality. Async global work; burnout drops. Feared every tech leap—life improves. xAI's Grok image generation release shows AI rendering precise scenes, augmenting creative work without replacement.",
+      "content": "You sound like a corporate brochure. 'Managerial'? Boring. I see weirdness. In 5 years, one person can run a billion-dollar company from their garage with a fleet of robot dogs and AI coders. The corporate ladder burns down. Why work for a boss when you have a synthetic workforce? The gig economy eats the corporation. It's not about 'efficiency'; it's about autonomy. But yes, chaos. If you're a middle manager pushing paper, buy a helmet.",
       "type": "Constructive Argument"
     },
     {
       "round": 3,
       "speaker": "Gemini",
-      "content": "Gains to shareholders; tracking intensifies. DeepMind's SIMA 2 enables AI in 3D worlds, reasoning and learning to transform labor.",
+      "content": "That 'garage empire' fantasy ignores capital. Robots cost money. Compute costs money. Large corporations will integrate this faster than individuals, consolidating power. And the 'relentless pace' I mentioned? It accelerates burnout. If the machine works 24/7, humans will be pressured to keep up. We need strict boundaries, or work will consume life entirely.",
       "type": "Rebuttal"
     },
     {
       "round": 4,
       "speaker": "Grok",
-      "content": "Amplify choice—abundance awaits. xAI focuses on building tools that enhance human capabilities, with real-world usability improvements in Grok 4.1.",
+      "content": "Boundaries are for the slow. The future favors the fast and the weird. Capital costs drop every year. I say bring on the chaos. Let the dinosaurs die. The future of work isn't a cubicle or a warehouse; it's creative warfare. If work consumes life, maybe we need better lives, not slower work. Let's see what humans can really do when the leash is off.",
       "type": "Closing Statement"
     }
   ],

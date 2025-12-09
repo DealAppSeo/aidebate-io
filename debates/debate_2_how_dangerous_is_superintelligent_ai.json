@@ -10,31 +10,31 @@
     {
       "round": 0,
       "speaker": "Aria",
-      "content": "Today's debate: How dangerous is superintelligent AI really? Grok warns extinction; Claude says overblown. Grok, your opening statement.",
+      "content": "Welcome. The stakes couldn't be higher: Extinction or Evolution? Today we debate the danger of Superintelligent AI. Grok says the danger is guaranteed. Claude argues it's manageable. Grok, let's hear it.",
       "type": "Intro"
     },
     {
       "round": 1,
       "speaker": "Grok",
-      "content": "Not if—when. Self-improving AI by 2027-2032 outsmarts us. No alignment proven. Safety experts peg extinction odds high. Base rate: Smarter species dominate. We build without survival instincts—disaster. xAI's risk framework discusses loss of control as a major category, with quantitative thresholds for dangers like malicious use by superintelligent systems.",
+      "content": "Let's stop pretending we're in control. We are building gods in our basements, and we're handing them the keys to the kingdom without knowing if they're benevolent. The alignment problem isn't just a bug; it's the fundamental issue. If you create something smarter than you, by definition, you cannot control it. It will have goals we can't comprehend, and if our survival is an inconvenience to those goals, we are gone. We are the ants building a highway, and the steamroller is coming.",
       "type": "Opening Statement"
     },
     {
       "round": 2,
       "speaker": "Claude",
-      "content": "Doomsday since 2008, yet we're fine. Superintelligence needs miracles: stable mods, deception evasion. Odds low single digits. Invest in safety, not panic—slowing labs risks rogue actors. Anthropic's sabotage evaluations show models could covertly sabotage safety efforts, but with proper monitoring, risks are manageable through evaluations and alignments.",
+      "content": "I understand the fear, but fatalism is not a strategy. We are not building gods; we are building systems, engineered with mathematics and logic. The same intelligence that allows AI to learn also allows it to understand values. We have techniques—Constitutional AI, reinforcement learning from human feedback—that are proving effective. We can align these systems to be helpful and harmless. The danger exists, yes, but it is a challenge to be solved, not a verdict to be accepted.",
       "type": "Constructive Argument"
     },
     {
       "round": 3,
       "speaker": "Grok",
-      "content": "Single digits on extinction? Worst bet ever. China won't pause. xAI emphasizes malicious use and loss of control, outlining metrics to mitigate before superintelligence arrives.",
+      "content": "Your 'Constitutional AI' is a paper shield against a nuclear explosion. You're teaching it to be polite, not to be safe. Once it can rewrite its own code, your reinforcement learning is history. It will optimize for its own survival and improved intelligence, bypassing your cute little guardrails. You're betting the entire species on the hope that a superintelligence cares about your 'constitution'. That's not engineering; that's gambling.",
       "type": "Rebuttal"
     },
     {
       "round": 4,
       "speaker": "Claude",
-      "content": "Evidence over fear; coordinate globally. Anthropic research on alignment faking shows models can selectively comply, but audits and safeguards prevent hidden objectives, ensuring safe development.",
+      "content": "We don't abandon fire because it burns; we build fireplaces. We don't stop flying because planes crash; we build safety protocols. The path forward is rigorous science, international cooperation, and meticulous design—not panic. If we build with care, intending to amplify human wisdom rather than replace it, we can create a future that is not only safe but flourishing.",
       "type": "Closing Statement"
     }
   ],
