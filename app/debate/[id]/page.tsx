@@ -16,11 +16,13 @@ const HallucinationModal = dynamic(() => import('@/components/modals/Hallucinati
 const ShareModal = dynamic(() => import('@/components/modals/ShareModal'), { ssr: false })
 import { useSession } from '@/hooks/useSession'
 import { RepIDBreakdown } from '@/lib/repid'
+import { useEngagementCap } from '@/hooks/useEngagementCap'
 
 export default function DebatePage() {
     const params = useParams()
     const router = useRouter()
     const { session, updateSession } = useSession()
+    const { addEngagement } = useEngagementCap()
 
     const [debate, setDebate] = useState<any>(null)
     const [loading, setLoading] = useState(true)
@@ -131,6 +133,9 @@ export default function DebatePage() {
                 setNewStreak(data.new_streak)
                 setPredictionCorrect(data.prediction_correct)
                 setViewMode('results')
+
+                // Track engagement
+                addEngagement()
 
                 if (updateSession) updateSession({})
                 fetchDebate() // Refresh stats

@@ -6,11 +6,14 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
 import { PostDebateSurvey } from './PostDebateSurvey';
+import { useEngagementCap } from '@/hooks/useEngagementCap';
 
 export const DailyDebate = () => {
     const [timeLeft, setTimeLeft] = useState('');
     const [streak, setStreak] = useState(0);
     const [dailyDebate, setDailyDebate] = useState<any>(null);
+    const { isCapped } = useEngagementCap();
+
     const [hasVoted, setHasVoted] = useState(false);
     const [loading, setLoading] = useState(true);
     const [showSurvey, setShowSurvey] = useState(false);
@@ -105,6 +108,19 @@ export const DailyDebate = () => {
     }, []);
 
     if (loading) return null;
+    if (isCapped) {
+        return (
+            <div className="w-full max-w-4xl mx-auto mb-8 px-4 text-center py-8">
+                <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+                    <h3 className="text-xl font-bold text-white mb-2">You've made your mark today!</h3>
+                    <p className="text-gray-400">Come back later to vote on more debates and polls. Quality over quantity!</p>
+                    <div className="mt-4 text-sm text-gray-500 font-mono">
+                        Next daily in: <span className="text-gray-300">{timeLeft}</span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     if (!dailyDebate) return null;
 
     // Calculate percentages for results view

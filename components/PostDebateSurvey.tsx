@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
 import { Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
+import { useEngagementCap } from '@/hooks/useEngagementCap';
 
 interface Poll {
     id: string;
@@ -27,6 +28,8 @@ export const PostDebateSurvey = ({ onComplete }: { onComplete: () => void }) => 
     const [results, setResults] = useState<PollResult[]>([]);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [totalVotes, setTotalVotes] = useState(0);
+
+    const { addEngagement } = useEngagementCap();
 
     const supabase = createClient();
 
@@ -132,6 +135,7 @@ export const PostDebateSurvey = ({ onComplete }: { onComplete: () => void }) => 
 
         setHasVoted(true);
         setVoting(false);
+        addEngagement();
     };
 
     if (loading) return <div className="p-8 text-center text-gray-500 animate-pulse">Loading conversation...</div>;

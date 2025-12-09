@@ -34,25 +34,22 @@ export function useSession() {
             let sessionId = localStorage.getItem('aidebate_session_id')
 
             if (!sessionId) {
-                sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-                localStorage.setItem('aidebate_session_id', sessionId)
-
-                // Create new session in Supabase
-                const response = await fetch('/api/session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session_id: sessionId })
-                })
-
-                if (!response.ok) throw new Error('Failed to create session')
-                const data = await response.json()
-                setSession(data.session)
+                await createNewSession()
             } else {
                 // Fetch existing session
                 const response = await fetch(`/api/session?session_id=${sessionId}`)
-                if (!response.ok) throw new Error('Failed to fetch session')
-                const data = await response.json()
-                setSession(data.session)
+
+                if (response.status === 404) {
+                    // Session invalid/deleted on server - create new one
+                    console.log("Session not found on server, creating new one...")
+                    localStorage.removeItem('aidebate_session_id')
+                    await createNewSession()
+                } else if (!response.ok) {
+                    throw new Error('Failed to fetch session')
+                } else {
+                    const data = await response.json()
+                    setSession(data.session)
+                }
             }
         } catch (error) {
             console.error('Session initialization failed:', error)
@@ -74,6 +71,22 @@ export function useSession() {
         } finally {
             setLoading(false)
         }
+    }
+
+    async function createNewSession() {
+        const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        localStorage.setItem('aidebate_session_id', sessionId)
+
+        // Create new session in Supabase
+        const response = await fetch('/api/session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId })
+        })
+
+        if (!response.ok) throw new Error('Failed to create session')
+        const data = await response.json()
+        setSession(data.session)
     }
 
     async function updateSession(updates: Partial<UserSession>) {
