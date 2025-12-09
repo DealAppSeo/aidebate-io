@@ -1,9 +1,11 @@
+
 "use client";
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { createClient } from '@/utils/supabase/client';
+import { PostDebateSurvey } from './PostDebateSurvey';
 
 export const DailyDebate = () => {
     const [timeLeft, setTimeLeft] = useState('');
@@ -11,19 +13,32 @@ export const DailyDebate = () => {
     const [dailyDebate, setDailyDebate] = useState<any>(null);
     const [hasVoted, setHasVoted] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [showSurvey, setShowSurvey] = useState(false);
+    const [surveyComplete, setSurveyComplete] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             const supabase = createClient();
 
-            // 1. Fetch the latest active debate to be the "Daily Debate"
-            // Ideally we'd have a 'daily_date' or 'featured' flag, but for now we take the latest.
-            const { data: debates } = await supabase
+            // 1. Fetch Today's Scheduled Debate
+            const today = new Date().toISOString().split('T')[0];
+
+            let { data: debates } = await supabase
                 .from('debates')
                 .select('*')
-                .in('status', ['active', 'live'])
-                .order('created_at', { ascending: false })
+                .eq('scheduled_for', today)
                 .limit(1);
+
+            // Fallback: If no scheduled debate, get latest active
+            if (!debates || debates.length === 0) {
+                const { data: fallback } = await supabase
+                    .from('debates')
+                    .select('*')
+                    .in('status', ['active', 'live'])
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+                debates = fallback;
+            }
 
             if (debates && debates.length > 0) {
                 const debate = debates[0];
@@ -53,10 +68,14 @@ export const DailyDebate = () => {
 
                     if (vote) {
                         setHasVoted(true);
+                        // If they voted, we optimistically assume they might have surveys to do (unless we track completion elsewhere).
+                        // The PostDebateSurvey component handles the "no more polls" case itself.
+                        if (!surveyComplete) {
+                            setShowSurvey(true);
+                        }
                     }
                 }
             } else {
-                // Fallback or empty state if no debates
                 console.log("No active debates found");
             }
             setLoading(false);
@@ -85,7 +104,7 @@ export const DailyDebate = () => {
         return () => clearInterval(interval);
     }, []);
 
-    if (loading) return null; // Or a skeleton
+    if (loading) return null;
     if (!dailyDebate) return null;
 
     // Calculate percentages for results view
@@ -113,11 +132,16 @@ export const DailyDebate = () => {
                             "{dailyDebate.title}"
                         </h2>
 
-                        {/* If voted, show results (percentages only); otherwise show timer and encouragement */}
-                        {hasVoted ? (
+                        {showSurvey && !surveyComplete ? (
+                            <div className="py-2">
+                                <PostDebateSurvey onComplete={() => {
+                                    setSurveyComplete(true);
+                                    setShowSurvey(false);
+                                }} />
+                            </div>
+                        ) : hasVoted ? (
                             <div className="space-y-3 w-full max-w-md bg-black/20 p-4 rounded-xl backdrop-blur-sm border border-white/5">
                                 <div className="space-y-2">
-                                    {/* AI 1 Bar */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between text-xs text-gray-300">
                                             <span>{dailyDebate.ai1_name}</span>
@@ -132,7 +156,6 @@ export const DailyDebate = () => {
                                         </div>
                                     </div>
 
-                                    {/* AI 2 Bar */}
                                     <div className="space-y-1">
                                         <div className="flex justify-between text-xs text-gray-300">
                                             <span>{dailyDebate.ai2_name}</span>

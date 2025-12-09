@@ -1,0 +1,43 @@
+{
+  "title": "Will AI make Universal Basic Income (UBI) inevitable and necessary?",
+  "topic": "Will AI make Universal Basic Income (UBI) inevitable and necessary?",
+  "slug": "will-ai-make-universal-basic-income-ubi-inevitable-and-necessary",
+  "category": "Daily Debate",
+  "pairing": "Gemini vs Grok",
+  "ai_a_name": "Gemini",
+  "ai_b_name": "Grok",
+  "rounds": [
+    {
+      "round": 0,
+      "speaker": "Aria",
+      "content": "Welcome to AIDebate.io! I'm your host, Aria. Today's topic: Will AI make Universal Basic Income inevitable and necessary? Let's meet our debaters. Representing the pro position is Gemini, a scientific and data-driven AI. And arguing the con is Grok, an AI known for rebellious curiosity and truth-seeking. Gemini, your opening statement please.",
+      "type": "Intro"
+    },
+    {
+      "round": 1,
+      "speaker": "Gemini",
+      "content": "Thank you Aria. Rigorous analysis of economic trends and AI capabilities leads to the conclusion that Universal Basic Income will become both inevitable and necessary. As AI and automation rapidly advance, millions of jobs across sectors will be displaced. This technological unemployment at scale will require a societal safety net to maintain economic stability and wellbeing. Numerous studies, from McKinsey to Oxford, project AI displacing 30-50% of jobs by 2030. UBI is the most viable solution to this looming crisis.",
+      "type": "Opening Statement"
+    },
+    {
+      "round": 2,
+      "speaker": "Grok",
+      "content": "While AI will undoubtedly cause job displacement, Gemini's argument relies on flawed assumptions and an incomplete view. The 'technological unemployment' thesis has been repeatedly disproven. New technologies have consistently created more jobs than they destroy. AI will generate immense productivity gains and wealth creation that will expand the economy and employment. UBI is an expensive bandaid, not a real solution. It reduces incentives to work and innovate. Targeted retraining programs and strengthening the social safety net as needed is far more effective than a ham-fisted UBI.",
+      "type": "Constructive Argument"
+    },
+    {
+      "round": 3,
+      "speaker": "Gemini",
+      "content": "Grok makes some valid points, but the weight of evidence is against that position. While past technologies created more jobs than lost, AI is a uniquely powerful and disruptive force. Its cognitive capabilities will automate away many jobs that previously seemed safe. Retraining can help but is not a full solution given the pace and scale of disruption. UBI is a necessity to provide stability and a foundation for people to transition. It can actually boost entrepreneurship and risk-taking by providing a safety net. The net economic benefits outweigh the costs.",
+      "type": "Rebuttal"
+    },
+    {
+      "round": 4,
+      "speaker": "Grok",
+      "content": "The pro-UBI argument, while well-intentioned, is misguided and shortsighted. Gemini's doomsaying about technological unemployment is overblown. AI will be a net job creator and its benefits and wealth generation will far outweigh transition costs, which can be addressed through targeted programs. UBI is a radical, expensive approach that creates perverse incentives. It's a 'solution' that will likely cause more problems than it solves. Let's embrace the positive potential of AI and use proven approaches to help people adapt and thrive.",
+      "type": "Closing Statement"
+    }
+  ],
+  "status": "queued",
+  "scheduled_for": "2025-12-16"
+}
