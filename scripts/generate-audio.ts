@@ -18,13 +18,18 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 // --- CONFIGURATION ---
 
+import { AI_VOICES, getVoiceForModel } from '../lib/voiceConfig';
+
+// Map legacy names to config if needed, or just use the helper
+// We will use the helper function `getVoiceForModel` in the loop instead of this map
+// But to keep existing logic structure minimal change:
 const VOICE_IDS: Record<string, string> = {
-    'Aria': 'EXAVITQu4vr4xnSDxMaL',
-    'Claude': 'Cwh3Epv47UyEOtLVzCnb', // Roger (Male)
-    'GPT-4o': 'AZnzlk1XvdvUeBnXmlld', // Josh (Male)
-    'Grok': 'VR6AewLTigWG4xSOukaG',   // Adam (Male)
-    'Gemini': 'N2lVS1w4EtoT3dr4eOWO', // Rachel (Female)
-    'DeepSeek': 'N2lVS1w4EtoT3dr4eOWO' // Rachel (Female)
+    'Aria': AI_VOICES.aria.voiceId,
+    'Claude': AI_VOICES.claude.voiceId,
+    'GPT-4o': AI_VOICES.gpt4o.voiceId,
+    'Grok': AI_VOICES.grok.voiceId,
+    'Gemini': AI_VOICES.gemini.voiceId,
+    'DeepSeek': AI_VOICES.gemini.voiceId // Using Rachel for DeepSeek
 };
 
 const VOICE_SETTINGS = {

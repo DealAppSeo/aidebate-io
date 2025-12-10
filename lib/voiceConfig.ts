@@ -1,9 +1,9 @@
 export const AI_VOICES = {
-    aria: { voiceId: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', style: 'warm host' },
-    claude: { voiceId: 'Cwh3Epv47UyEOtLVzCnb', name: 'Roger', style: 'confident philosopher' },
-    gpt4o: { voiceId: 'AZnzlk1XvdvUeBnXmlld', name: 'Josh', style: 'confident executive' },
-    grok: { voiceId: 'VR6AewLTigWG4xSOukaG', name: 'Adam', style: 'edgy provocateur' },
-    gemini: { voiceId: 'N2lVS1w4EtoT3dr4eOWO', name: 'Rachel', style: 'analytical scientist' }
+    claude: { voiceId: 'pNInz6obpgDQGcFmaJgB', name: 'Antoni', style: 'confident philosopher' },
+    gpt4o: { voiceId: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', style: 'confident executive' },
+    grok: { voiceId: 'pFZP5JQG7iQjIQuC4Bku', name: 'Adam', style: 'edgy provocateur' },
+    gemini: { voiceId: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', style: 'analytical scientist' },
+    aria: { voiceId: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', style: 'warm host' }
 } as const;
 
 export type VoiceKey = keyof typeof AI_VOICES;
@@ -20,7 +20,8 @@ export function getVoiceForModel(modelName: string): string {
     if (lower.includes('gpt')) return AI_VOICES.gpt4o.voiceId;
     if (lower.includes('grok')) return AI_VOICES.grok.voiceId;
     if (lower.includes('gemini')) return AI_VOICES.gemini.voiceId;
-    if (lower.includes('deepseek')) return AI_VOICES.gemini.voiceId;
+    if (lower.includes('deepseek')) return AI_VOICES.gemini.voiceId; // Fallback to Rachel for DeepSeek
+    if (lower.includes('aria')) return AI_VOICES.aria.voiceId;
     return AI_VOICES.gpt4o.voiceId;
 }
 
