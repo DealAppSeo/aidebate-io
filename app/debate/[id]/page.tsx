@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Header from '@/components/layout/Header'
 import DebatePlayer from '@/components/debates/DebatePlayer'
+import DebateTranscript from '@/components/debates/DebateTranscript'
 import { VoteScreen } from '@/components/debates/VoteScreen'
 import { ResultsScreen } from '@/components/debates/ResultsScreen'
 import MissionScreen from '@/components/debates/MissionScreen'
@@ -155,6 +156,14 @@ export default function DebatePage() {
         { id: 'ai_b', name: debate.ai_b_name, color: '#f59e0b' }
     ]
 
+    // A debate is "playable" only if at least one round carries an audio URL.
+    // The two-sided / empty debates have none — route them to the read-only
+    // transcript instead of a dead audio player. (Removed once audio generation
+    // supports the two-sided shape.)
+    const hasPlayableAudio = Array.isArray(debate.rounds) && debate.rounds.some(
+        (r: any) => r?.audio_url || r?.ai_a_audio_url || r?.ai_b_audio_url
+    )
+
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white pb-12">
             <Header />
@@ -176,16 +185,25 @@ export default function DebatePage() {
                     )}
 
                     {viewMode === 'player' && (
-                        <DebatePlayer
-                            debateId={debate.id}
-                            rounds={debate.rounds}
-                            ai1Name={debate.ai_a_name}
-                            ai2Name={debate.ai_b_name}
-                            topic={debate.topic}
-                            session={session}
-                            prediction={prediction || undefined}
-                            onComplete={handleDebateComplete}
-                        />
+                        hasPlayableAudio ? (
+                            <DebatePlayer
+                                debateId={debate.id}
+                                rounds={debate.rounds}
+                                ai1Name={debate.ai_a_name}
+                                ai2Name={debate.ai_b_name}
+                                topic={debate.topic}
+                                session={session}
+                                prediction={prediction || undefined}
+                                onComplete={handleDebateComplete}
+                            />
+                        ) : (
+                            <DebateTranscript
+                                rounds={debate.rounds || []}
+                                ai1Name={debate.ai_a_name}
+                                ai2Name={debate.ai_b_name}
+                                onComplete={handleDebateComplete}
+                            />
+                        )
                     )}
 
                     {viewMode === 'vote' && (
