@@ -87,20 +87,59 @@ async function uploadAudio(audioBuffer: ArrayBuffer, filePath: string) {
 }
 
 async function processDebate(debate: any) {
-    console.log(`\n🎙️  Processing Debate ${debate.id}: ${debate.title}...`)
+    console.log(`\n🎙️  Processing Debate ${debate.id}: ${debate.topic || debate.title}...`)
+
+    const srcRounds: any[] = Array.isArray(debate.rounds) ? debate.rounds : [];
+    if (srcRounds.length === 0) {
+        console.log('    ⏭️  No rounds — nothing to voice, skipping.');
+        return;
+    }
+
+    // Some debates use a two-sided round shape (ai_a_content / ai_b_content with
+    // an empty `content` and no `speaker`) that the player + transcript don't
+    // read. Normalize those into sequential single-speaker rounds so the EXISTING
+    // player handles them — no player rewrite. Single-speaker debates pass through.
+    const isTwoSided = srcRounds.some(
+        (r) => (!r.content || !String(r.content).trim()) && (r.ai_a_content || r.ai_b_content)
+    );
+
+    let newRounds: any[];
+    if (isTwoSided) {
+        newRounds = [];
+        let seq = 1;
+        for (const r of srcRounds) {
+            const cTxt = String(r.content || '').trim();
+            const aTxt = String(r.ai_a_content || '').trim();
+            const bTxt = String(r.ai_b_content || '').trim();
+            if (cTxt) {
+                newRounds.push({ ...r, round: seq++ });
+                continue;
+            }
+            if (aTxt) newRounds.push({ round: seq++, type: r.type || 'argument', title: r.title, speaker: debate.ai_a_name, content: aTxt });
+            if (bTxt) newRounds.push({ round: seq++, type: r.type || 'argument', title: r.title, speaker: debate.ai_b_name, content: bTxt });
+        }
+        console.log(`    ↳ two-sided: normalized ${srcRounds.length} rounds → ${newRounds.length} single-speaker rounds`);
+    } else {
+        newRounds = srcRounds.map((r) => ({ ...r }));
+    }
 
     let roundsUpdated = false
-    const newRounds = [...debate.rounds]; // clone
 
     for (let i = 0; i < newRounds.length; i++) {
         const round = newRounds[i];
 
-        if (!round.content) {
+        // Idempotent + credit-safe: never re-TTS a round that already has audio.
+        if (round.audio_url) {
+            continue;
+        }
+
+        if (!round.content || !String(round.content).trim()) {
             console.warn(`    Skipping round ${round.round} (no content)`);
             continue;
         }
 
-        const voiceId = VOICE_IDS[round.speaker];
+        // Resolve voice by exact speaker name, then fall back to model matching.
+        const voiceId = VOICE_IDS[round.speaker] || getVoiceForModel(String(round.speaker || ''));
         if (!voiceId) {
             console.warn(`    ⚠️ Unknown speaker: ${round.speaker}, skipping audio.`);
             continue;
@@ -127,14 +166,19 @@ async function processDebate(debate: any) {
         }
     }
 
-    if (roundsUpdated) {
+    // Write back when we added audio, OR when we normalized a two-sided debate
+    // (so its content/speaker populate and the transcript/player render even if
+    // an audio call failed).
+    if (roundsUpdated || isTwoSided) {
         const { error } = await supabase
             .from('debates')
             .update({ rounds: newRounds })
             .eq('id', debate.id);
 
         if (error) console.error(`    ❌ DB Update Error: ${error.message}`);
-        else console.log('    💾 Updated rounds in DB with audio URLs');
+        else console.log(`    💾 Updated rounds in DB (${newRounds.filter((r: any) => r.audio_url).length}/${newRounds.length} with audio)`);
+    } else {
+        console.log('    ✓ Already voiced — no changes.');
     }
 }
 
